@@ -1,2 +1,5 @@
 # SportsCardTool
+<img src="https://img.shields.io/badge/license-Apache--2.0-green"/>
+
+## Overview
 A python tool for grabbing and tracking checklists for sports cards.
