@@ -1,7 +1,6 @@
 from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs
 from unittest.mock import patch
 from bs4 import BeautifulSoup
-
 import os
 import pandas as pd
 
@@ -19,7 +18,7 @@ def test_dump_date():
 
 def test_get_soup():
     mock_soup = get_soup("https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists")
-    assert type(mock_soup) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'html.parser'))
+    assert type(mock_soup) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
 
 def test_filter_href():
     mock_soup = get_soup("https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists")
