@@ -57,39 +57,42 @@ def parse_panel(panel, year, group, set):
             card["rc"] = True
 
     return card
-    
-card_list = []
 
-# Use link for years catalogue
-year_soup = get_soup("https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists")
-year_links = filter_hrefs(year_soup.find_all('a'), "year-")
+def grab_card_list():
+    card_list = []
 
-# Main parsing loop
-for i,year_link in enumerate(year_links):
-    # Only grab first n years that appear in descending order
-    # TODO Change to I/O to select years
-    if i > 0:
-        break
-    year = str(year_link).split("year-")[1].split("/")[0]
-    print("Finding cards for", year, "hold on this might take a while!")
-    group_soup = get_soup(year_link)
-    groupus_soupus = set(group_soup.findAll('a'))
-    group_links = filter_hrefs(groupus_soupus, "index-")
-    for j in tqdm(range(len(group_links))):
-        group_href = group_links[j]
-        group = str(group_href).split("index-")[1].split("/")[0]
-        set_soup = get_soup(group_href)
-        set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
-        for k,set_link in enumerate(set_links):
-            set_ = str(set_link).split(year+"-")[1]
-            player_soup = get_soup(set_link)
-            player_panels = player_soup.find_all("div", class_="panel panel-primary")
-            for player_panel in player_panels:
-                card = parse_panel(player_panel, year, group, set_)
-                card_list.append(card)
+    # Use link for years catalogue
+    year_soup = get_soup("https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists")
+    year_links = filter_hrefs(year_soup.find_all('a'), "year-")
 
-# Dump data into csv
-with open('demo_cards.csv', 'w', newline='') as output_file:
-    dict_writer = csv.DictWriter(output_file, card_list[0].keys())
-    dict_writer.writeheader()
-    dict_writer.writerows(card_list)
+    # Main parsing loop
+    for i,year_link in enumerate(year_links):
+        # Only grab first n years that appear in descending order
+        # TODO Change to I/O to select years
+        if i > 0:
+            break
+        year = str(year_link).split("year-")[1].split("/")[0]
+        print("Finding cards for", year, "hold on this might take a while!")
+        group_soup = get_soup(year_link)
+        groupus_soupus = set(group_soup.findAll('a'))
+        group_links = filter_hrefs(groupus_soupus, "index-")
+        for j in tqdm(range(len(group_links))):
+            group_href = group_links[j]
+            group = str(group_href).split("index-")[1].split("/")[0]
+            set_soup = get_soup(group_href)
+            set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
+            for k,set_link in enumerate(set_links):
+                set_ = str(set_link).split(year+"-")[1]
+                player_soup = get_soup(set_link)
+                player_panels = player_soup.find_all("div", class_="panel panel-primary")
+                for player_panel in player_panels:
+                    card = parse_panel(player_panel, year, group, set_)
+                    card_list.append(card)
+    return card_list
+
+def dump_data(card_list):
+    # Dump data into csv
+    with open('demo_cards.csv', 'w', newline='') as output_file:
+        dict_writer = csv.DictWriter(output_file, card_list[0].keys())
+        dict_writer.writeheader()
+        dict_writer.writerows(card_list)
