@@ -52,6 +52,7 @@ develop = [
     "pytest-cov>=2.6.1",
     "twine",
     "wheel",
+    "pandas"
 ]
 
 [tool.black]
