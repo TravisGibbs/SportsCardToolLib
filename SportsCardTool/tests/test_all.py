@@ -1,5 +1,7 @@
-from SportsCardTool import grab_card_list, dump_data
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs
 from unittest.mock import patch
+from bs4 import BeautifulSoup
+
 import os
 import pandas as pd
 
@@ -14,6 +16,16 @@ def test_dump_date():
     dump_data(mock_data)
     results = pd.read_csv('demo_cards.csv')
     assert len(results) == 3
+
+def test_get_soup():
+    mock_soup = get_soup("https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists")
+    assert type(mock_soup) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'html.parser'))
+
+def test_filter_href():
+    mock_soup = get_soup("https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists")
+    mock_data = mock_soup.find_all('a')
+    result = filter_hrefs(mock_data, "year-")
+    assert len(result) > 0 and len(result) < len(mock_data)
 
 def integration_test_grab_and_dump():
     card_list = grab_card_list()
