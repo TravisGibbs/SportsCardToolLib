@@ -14,7 +14,7 @@ def test_dump_date():
     mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
     dump_data(mock_data)
     results = pd.read_csv('demo_cards.csv')
-    assert len(results) == 3
+    assert len(results) == 2
 
 
 def test_get_soup():
