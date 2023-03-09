@@ -1,7 +1,5 @@
 from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs
-from unittest.mock import patch
 from bs4 import BeautifulSoup
-import os
 import pandas as pd
 
 

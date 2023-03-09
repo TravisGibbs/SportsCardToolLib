@@ -44,7 +44,7 @@ def parse_panel(panel, year, group, set):
         card["name"] = name.strip()
 
     # Panel Area -> team, relic, auto, rc, serial
-    badge_panel = player_panel.find_all("div", class_="border-muted border-bottom mb-3 pb-1")
+    badge_panel = panel.find_all("div", class_="border-muted border-bottom mb-3 pb-1")
 
     card["team"] = str(badge_panel[0]).split(">")[1].split("<")[0].strip()
 
