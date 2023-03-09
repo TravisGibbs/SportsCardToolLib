@@ -1,7 +1,7 @@
 graft SportsCardsTool
 
 include LICENSE
-include README.md
+include *.md
 
 include .bumpversion.cfg
 include pyproject.toml
