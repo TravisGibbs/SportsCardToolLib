@@ -35,7 +35,7 @@ def test_filter_href():
 
 def integration_test_grab_and_dump():
     card_list = grab_card_list()
-    expected_length = len(card_list) + 1
+    expected_length = len(card_list)
     dump_data(card_list)
     results = pd.read_csv('demo_cards.csv')
     assert len(results) == expected_length
