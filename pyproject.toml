@@ -16,8 +16,7 @@ requires-python = ">=3.7"
 
 dependencies = [
     "bs4",
-    "tqdm",
-    "urllib"
+    "tqdm"
 ]
 
 classifiers = [
