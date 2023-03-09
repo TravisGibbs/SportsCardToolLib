@@ -101,5 +101,4 @@ python_version = '3.10'
 # disallow_untyped_calls = true
 
 [tool.pytest.ini_options]
-asyncio_mode = 'strict'
 testpaths = 'SportsCardTool/tests'
