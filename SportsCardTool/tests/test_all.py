@@ -1,10 +1,15 @@
-from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links
 from bs4 import BeautifulSoup
 import pandas as pd
 
 
+def test_grab_year_links():
+    assert len(grab_year_links(["2023"])) == 1
+    assert len(grab_year_links(["2023", "2022"])) == 2
+
+
 def test_grab_data():
-    card_list = grab_card_list()
+    card_list = grab_card_list(grab_year_links(["2023"]))
     assert type(card_list) == type(list())
     assert len(card_list) > 100
     assert type(card_list[0]) == type(dict())
@@ -34,7 +39,7 @@ def test_filter_href():
 
 
 def integration_test_grab_and_dump():
-    card_list = grab_card_list()
+    card_list = grab_card_list(grab_year_links(["2023"]))
     expected_length = len(card_list)
     dump_data(card_list)
     results = pd.read_csv('demo_cards.csv')
