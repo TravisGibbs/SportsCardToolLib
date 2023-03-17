@@ -35,7 +35,6 @@ def grab_year_links(year_list):
 
     for year in year_list:
         year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-" + year))
-
     return year_links
 
 
@@ -80,7 +79,7 @@ def parse_panel(panel, year, group, set):
 def grab_card_list(year_links):
     card_list = []
     # Main parsing loop
-    for year_link in enumerate(year_links):
+    for year_link in year_links:
         year = str(year_link).split("year-")[1].split("/")[0]
         print("Finding cards for", year, "hold on this might take a while!")
         group_soup = get_soup(year_link)
