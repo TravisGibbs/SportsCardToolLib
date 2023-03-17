@@ -80,11 +80,7 @@ def parse_panel(panel, year, group, set):
 def grab_card_list(year_links):
     card_list = []
     # Main parsing loop
-    for i, year_link in enumerate(year_links):
-        # Only grab first n years that appear in descending order
-        # TODO Change to I/O to select years
-        if i > 0:
-            break
+    for year_link in enumerate(year_links):
         year = str(year_link).split("year-")[1].split("/")[0]
         print("Finding cards for", year, "hold on this might take a while!")
         group_soup = get_soup(year_link)
