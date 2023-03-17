@@ -24,6 +24,19 @@ def get_soup(href):
     html_page = urlopen(req)
     return BeautifulSoup(html_page, "lxml")
 
+# Grab links to years from list of selections
+def grab_year_links(year_list):
+    year_links = []
+
+    year_soup = get_soup(
+        "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
+    )
+
+    for year in year_list:
+        year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-"+year))
+
+    return year_links
+
 
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
 def parse_panel(panel, year, group, set):
@@ -61,16 +74,9 @@ def parse_panel(panel, year, group, set):
 
     return card
 
-
-def grab_card_list():
+# Grabs a card list from a list of year links
+def grab_card_list(year_links):
     card_list = []
-
-    # Use link for years catalogue
-    year_soup = get_soup(
-        "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
-    )
-    year_links = filter_hrefs(year_soup.find_all('a'), "year-")
-
     # Main parsing loop
     for i, year_link in enumerate(year_links):
         # Only grab first n years that appear in descending order
@@ -97,9 +103,11 @@ def grab_card_list():
     return card_list
 
 
-def dump_data(card_list):
+def dump_data(card_list, csv_name='demo_cards.csv'):
     # Dump data into csv
-    with open('demo_cards.csv', 'w', newline='') as output_file:
+    with open(csv_name, 'w', newline='') as output_file:
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
+
+dump_data(grab_card_list(grab_year_links(["2023"])), "Master-Data.csv")
