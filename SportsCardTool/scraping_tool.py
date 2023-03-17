@@ -24,6 +24,7 @@ def get_soup(href):
     html_page = urlopen(req)
     return BeautifulSoup(html_page, "lxml")
 
+
 # Grab links to years from list of selections
 def grab_year_links(year_list):
     year_links = []
@@ -33,7 +34,7 @@ def grab_year_links(year_list):
     )
 
     for year in year_list:
-        year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-"+year))
+        year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-" + year))
 
     return year_links
 
@@ -74,6 +75,7 @@ def parse_panel(panel, year, group, set):
 
     return card
 
+
 # Grabs a card list from a list of year links
 def grab_card_list(year_links):
     card_list = []
@@ -109,5 +111,6 @@ def dump_data(card_list, csv_name='demo_cards.csv'):
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
+
 
 dump_data(grab_card_list(grab_year_links(["2023"])), "Master-Data.csv")

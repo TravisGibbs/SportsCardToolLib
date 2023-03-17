@@ -2,9 +2,10 @@ from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, gr
 from bs4 import BeautifulSoup
 import pandas as pd
 
+
 def test_grab_year_links():
     assert len(grab_year_links(["2023"])) == 1
-    assert len(grab_year_links(["2023", "2022"])) == 2 
+    assert len(grab_year_links(["2023", "2022"])) == 2
 
 
 def test_grab_data():
