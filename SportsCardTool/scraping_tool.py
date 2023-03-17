@@ -106,6 +106,3 @@ def dump_data(card_list, csv_name='demo_cards.csv'):
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
-
-
-dump_data(grab_card_list(grab_year_links(["2023"])), "Master-Data.csv")
