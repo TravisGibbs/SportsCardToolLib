@@ -45,15 +45,19 @@ def grab_year_links(year_list):
         year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-" + year))
     return year_links
 
+
 # Grabs Sales from relevant listing
 def grab_sales(listing):
-    r = requests.post("https://130point.com/wp_pages/sales/getDataParse.php", data={"query": quote(listing), "type": "2", "subcat": "-1"}, headers={"X-Requested-With": "XMLHttpRequest"})
+    r = requests.post(
+        "https://130point.com/wp_pages/sales/getDataParse.php",
+        data={"query": quote(listing), "type": "2", "subcat": "-1"},
+        headers={"X-Requested-With": "XMLHttpRequest"},
+    )
     try:
         data = json.loads(json.loads(r.content)['body'])
         return data
     except:
         return ""
-    
 
 
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
@@ -68,7 +72,7 @@ def parse_panel(panel, year, group, set):
     card['price'] = 0
 
     card['listing'] = panel.find("h5").text.strip()
-    
+
     name_number = card['listing'].split("#")[1]
     card['number'] = name_number.split(" ")[0]
     name = " ".join(name_number.split(" ")[1:])
@@ -148,4 +152,3 @@ def dump_data(card_list, csv_name='demo_cards.csv'):
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
-        
