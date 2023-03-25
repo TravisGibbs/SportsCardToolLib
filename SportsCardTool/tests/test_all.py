@@ -16,8 +16,8 @@ def test_grab_data():
 
 
 def test_grab_sales():
-    assert grab_sales("2022 Mike Trout") != ""
-    assert grab_sales("2019 Shohei Ohtani") != ""
+    assert len(grab_sales("2022 Mike Trout")) > 0
+    assert len(grab_sales("2019 Shohei Ohtani")) > 0
 
 
 def test_dump_date():

@@ -53,11 +53,8 @@ def grab_sales(listing):
         data={"query": quote(listing), "type": "2", "subcat": "-1"},
         headers={"X-Requested-With": "XMLHttpRequest"},
     )
-    try:
-        data = json.loads(json.loads(r.content)['body'])
-        return data
-    except:
-        return ""
+    data = json.loads(json.loads(r.content)['body'])
+    return data
 
 
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
