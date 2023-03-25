@@ -1,5 +1,8 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
+from urllib.parse import quote
+import json
+import requests
 from tqdm import tqdm
 import csv
 
@@ -41,6 +44,16 @@ def grab_year_links(year_list):
     for year in year_list:
         year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-" + year))
     return year_links
+
+# Grabs Sales from relevant listing
+def grab_sales(listing):
+    r = requests.post("https://130point.com/wp_pages/sales/getDataParse.php", data={"query": quote(listing), "type": "2", "subcat": "-1"}, headers={"X-Requested-With": "XMLHttpRequest"})
+    try:
+        data = json.loads(json.loads(r.content)['body'])
+        return data
+    except:
+        return ""
+    
 
 
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
@@ -135,4 +148,4 @@ def dump_data(card_list, csv_name='demo_cards.csv'):
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
-dump_data(grab_card_list(grab_year_links(["2000" ,"2001", "2002", "2003", "2004"])), "2000-2004.csv")
+        
