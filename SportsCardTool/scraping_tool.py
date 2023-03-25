@@ -21,12 +21,17 @@ def filter_hrefs(links, filter):
 # Gathers the soup given a href
 def get_soup(href):
     req = Request(href)
-    html_page = urlopen(req)
-    return BeautifulSoup(html_page, "lxml")
+    try:
+        html_page = urlopen(req)
+        return BeautifulSoup(html_page, "lxml")
+    except:
+        print("failed to capture " + href)
+        return BeautifulSoup("<HTML></HTML>", "lxml")
 
 
 # Grab links to years from list of selections
 def grab_year_links(year_list):
+    print(year_list)
     year_links = []
 
     year_soup = get_soup(
@@ -84,13 +89,28 @@ def grab_card_list(year_links):
         print("Finding cards for", year, "hold on this might take a while!")
         group_soup = get_soup(year_link)
         groupus_soupus = set(group_soup.findAll('a'))
+
         group_links = filter_hrefs(groupus_soupus, "index-")
+        set_links = filter_hrefs(groupus_soupus, "set-")
+
+        print("proccessing independent sets")
+        for k in tqdm(range(len(set_links))):
+            set_link = set_links[k]
+            set_ = str(set_link).split(year + "-")[1]
+            group = set_
+            player_soup = get_soup(set_link)
+            player_panels = player_soup.find_all("div", class_="panel panel-primary")
+            for player_panel in player_panels:
+                card = parse_panel(player_panel, year, group, set_)
+                card_list.append(card)
+
+        print("proccessing multi-sets")
         for j in tqdm(range(len(group_links))):
             group_href = group_links[j]
             group = str(group_href).split("index-")[1].split("/")[0]
             set_soup = get_soup(group_href)
             set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
-            for k, set_link in enumerate(set_links):
+            for set_link in set_links:
                 set_ = str(set_link).split(year + "-")[1]
                 player_soup = get_soup(set_link)
                 player_panels = player_soup.find_all("div", class_="panel panel-primary")
