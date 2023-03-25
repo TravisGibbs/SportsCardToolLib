@@ -50,8 +50,12 @@ def parse_panel(panel, year, group, set):
     card["auto"] = False
     card["mem"] = False
     card["rc"] = False
+    card['front_img'] = None
+    card['back_img'] = None
+    card['price'] = 0
 
     card['listing'] = panel.find("h5").text.strip()
+    
     name_number = card['listing'].split("#")[1]
     card['number'] = name_number.split(" ")[0]
     name = " ".join(name_number.split(" ")[1:])
@@ -61,6 +65,11 @@ def parse_panel(panel, year, group, set):
     else:
         card["name"] = name.strip()
 
+    for i, img in enumerate(panel.find_all(class_="img-fluid")):
+        if i == 0:
+            card['front_img'] = img['src']
+        else:
+            card['back_img'] = img['src']
     # Panel Area -> team, relic, auto, rc, serial
     badge_panel = panel.find_all("div", class_="border-muted border-bottom mb-3 pb-1")
 
@@ -69,7 +78,7 @@ def parse_panel(panel, year, group, set):
     for badge in badge_panel[0].find_all("div", class_="badge"):
         txt = badge.text
         if "Serial" in txt:
-            card["serial"] = int(txt.split("/")[1])
+            card["serial"] = int(txt.split("/")[1].split(" ")[0])
         elif "AUTO" in txt:
             card["auto"] = True
         elif "MEM" in txt:
@@ -126,3 +135,4 @@ def dump_data(card_list, csv_name='demo_cards.csv'):
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
+dump_data(grab_card_list(grab_year_links(["2000" ,"2001", "2002", "2003", "2004"])), "2000-2004.csv")
