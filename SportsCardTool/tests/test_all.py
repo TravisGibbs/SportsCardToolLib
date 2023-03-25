@@ -13,7 +13,7 @@ def test_grab_data():
     assert type(card_list) == type(list())
     assert len(card_list) > 100
     assert isinstance(card_list[0], dict)
-    
+
 
 def test_grab_sales():
     assert len(grab_sales("2022 Mike Trout")) > 0
