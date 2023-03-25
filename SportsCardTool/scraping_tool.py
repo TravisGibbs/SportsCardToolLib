@@ -27,7 +27,7 @@ def get_soup(href):
     try:
         html_page = urlopen(req)
         return BeautifulSoup(html_page, "lxml")
-    except:
+    except Exception:
         print("failed to capture " + href)
         return BeautifulSoup("<HTML></HTML>", "lxml")
 
