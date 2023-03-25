@@ -1,4 +1,4 @@
-from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, grab_sales
 from bs4 import BeautifulSoup
 import pandas as pd
 
@@ -13,6 +13,11 @@ def test_grab_data():
     assert type(card_list) == type(list())
     assert len(card_list) > 100
     assert type(card_list[0]) == type(dict())
+
+
+def test_grab_sales():
+    assert grab_sales("2022 Mike Trout") != ""
+    assert grab_sales("2019 Shohei Ohtani") != ""
 
 
 def test_dump_date():
