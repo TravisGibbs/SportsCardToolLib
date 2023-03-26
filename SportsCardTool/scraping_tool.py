@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from tqdm import tqdm
 import csv
+import requests
 
 # This script builds a csv from a baseball set list site into a more parsible csv
 # There is a basic descending heiarchy that can be represented by year->group->set->card
@@ -36,6 +37,16 @@ def grab_year_links(year_list):
     for year in year_list:
         year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-" + year))
     return year_links
+
+# Grabs Sales from relevant listing
+def grab_sales(listing):
+    r = requests.post(
+        "https://130point.com/wp_pages/sales/getDataParse.php",
+        data={"query": quote(listing), "type": "2", "subcat": "-1"},
+        headers={"X-Requested-With": "XMLHttpRequest"},
+    )
+    data = json.loads(json.loads(r.content)['body'])
+    return data
 
 
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
