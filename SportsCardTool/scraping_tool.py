@@ -1,5 +1,8 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
+from urllib.parse import quote
+import json
+import requests
 from tqdm import tqdm
 import csv
 
@@ -21,12 +24,17 @@ def filter_hrefs(links, filter):
 # Gathers the soup given a href
 def get_soup(href):
     req = Request(href)
-    html_page = urlopen(req)
-    return BeautifulSoup(html_page, "lxml")
+    try:
+        html_page = urlopen(req)
+        return BeautifulSoup(html_page, "lxml")
+    except Exception:
+        print("failed to capture " + href)
+        return BeautifulSoup("<HTML></HTML>", "lxml")
 
 
 # Grab links to years from list of selections
 def grab_year_links(year_list):
+    print(year_list)
     year_links = []
 
     year_soup = get_soup(
@@ -38,6 +46,17 @@ def grab_year_links(year_list):
     return year_links
 
 
+# Grabs Sales from relevant listing
+def grab_sales(listing):
+    r = requests.post(
+        "https://130point.com/wp_pages/sales/getDataParse.php",
+        data={"query": quote(listing), "type": "2", "subcat": "-1"},
+        headers={"X-Requested-With": "XMLHttpRequest"},
+    )
+    data = json.loads(json.loads(r.content)['body'])
+    return data
+
+
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
 def parse_panel(panel, year, group, set):
     card = {"year": year, "group": group, "set": set}
@@ -45,8 +64,12 @@ def parse_panel(panel, year, group, set):
     card["auto"] = False
     card["mem"] = False
     card["rc"] = False
+    card['front_img'] = None
+    card['back_img'] = None
+    card['price'] = 0
 
     card['listing'] = panel.find("h5").text.strip()
+
     name_number = card['listing'].split("#")[1]
     card['number'] = name_number.split(" ")[0]
     name = " ".join(name_number.split(" ")[1:])
@@ -56,6 +79,11 @@ def parse_panel(panel, year, group, set):
     else:
         card["name"] = name.strip()
 
+    for i, img in enumerate(panel.find_all(class_="img-fluid")):
+        if i == 0:
+            card['front_img'] = img['src']
+        else:
+            card['back_img'] = img['src']
     # Panel Area -> team, relic, auto, rc, serial
     badge_panel = panel.find_all("div", class_="border-muted border-bottom mb-3 pb-1")
 
@@ -64,7 +92,7 @@ def parse_panel(panel, year, group, set):
     for badge in badge_panel[0].find_all("div", class_="badge"):
         txt = badge.text
         if "Serial" in txt:
-            card["serial"] = int(txt.split("/")[1])
+            card["serial"] = int(txt.split("/")[1].split(" ")[0])
         elif "AUTO" in txt:
             card["auto"] = True
         elif "MEM" in txt:
@@ -84,13 +112,28 @@ def grab_card_list(year_links):
         print("Finding cards for", year, "hold on this might take a while!")
         group_soup = get_soup(year_link)
         groupus_soupus = set(group_soup.findAll('a'))
+
         group_links = filter_hrefs(groupus_soupus, "index-")
+        set_links = filter_hrefs(groupus_soupus, "set-")
+
+        print("proccessing independent sets")
+        for k in tqdm(range(len(set_links))):
+            set_link = set_links[k]
+            set_ = str(set_link).split(year + "-")[1]
+            group = set_
+            player_soup = get_soup(set_link)
+            player_panels = player_soup.find_all("div", class_="panel panel-primary")
+            for player_panel in player_panels:
+                card = parse_panel(player_panel, year, group, set_)
+                card_list.append(card)
+
+        print("proccessing multi-sets")
         for j in tqdm(range(len(group_links))):
             group_href = group_links[j]
             group = str(group_href).split("index-")[1].split("/")[0]
             set_soup = get_soup(group_href)
             set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
-            for k, set_link in enumerate(set_links):
+            for set_link in set_links:
                 set_ = str(set_link).split(year + "-")[1]
                 player_soup = get_soup(set_link)
                 player_panels = player_soup.find_all("div", class_="panel panel-primary")
