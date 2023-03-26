@@ -11,7 +11,7 @@ name = "SportsCardTool"
 authors = [{name = "Travis Gibbs", email = "travisgibbs.2019@gmail.com"}]
 description="A python tool for grabbing and tracking checklists for sports cards."
 readme = "README.md"
-version = "0.1.0"
+version = "0.1.1"
 requires-python = ">=3.7"
 
 dependencies = [
