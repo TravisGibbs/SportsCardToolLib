@@ -1,6 +1,14 @@
-from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, QueryBuilder
 from bs4 import BeautifulSoup
 import pandas as pd
+
+
+def query_builder_tests():
+    qb = QueryBuilder()
+    qb.add_item({"name": "Barry Bonds"})
+    data = qb.grab_data()
+    assert len(data[0]) >= 1000
+    assert data[1] >= 1000
 
 
 def test_grab_year_links():
