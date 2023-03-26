@@ -49,7 +49,7 @@ qb.add_item({"name": "Barry Bonds", "year": "2000", "auto": "True", "serial": "2
 # Make request and return in form of tuple (list[dict], int)
 data = qb.grab_data()
 
-print(data[1])
+print(data[0])
 ```
 ```json
 [
