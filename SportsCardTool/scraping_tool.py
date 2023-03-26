@@ -46,6 +46,7 @@ def grab_year_links(year_list):
         year_links.extend(filter_hrefs(year_soup.find_all('a'), "year-" + year))
     return year_links
 
+
 # Grabs Sales from relevant listing
 def grab_sales(listing):
     r = requests.post(
