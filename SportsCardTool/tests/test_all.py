@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
-def query_builder_tests():
+def test_query_builder():
     qb = QueryBuilder()
     qb.add_item({"name": "Barry Bonds"})
     data = qb.grab_data()
@@ -51,7 +51,7 @@ def test_filter_href():
     assert len(result) > 0 and len(result) < len(mock_data)
 
 
-def integration_test_grab_and_dump():
+def test_integration_grab_and_dump():
     card_list = grab_card_list(grab_year_links(["2023"]))
     expected_length = len(card_list)
     dump_data(card_list)
