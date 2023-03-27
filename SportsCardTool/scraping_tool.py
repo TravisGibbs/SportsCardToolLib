@@ -46,17 +46,6 @@ def grab_year_links(year_list):
     return year_links
 
 
-# Grabs Sales from relevant listing
-def grab_sales(listing):
-    r = requests.post(
-        "https://130point.com/wp_pages/sales/getDataParse.php",
-        data={"query": quote(listing), "type": "2", "subcat": "-1"},
-        headers={"X-Requested-With": "XMLHttpRequest"},
-    )
-    data = json.loads(json.loads(r.content)['body'])
-    return data
-
-
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
 def parse_panel(panel, year, group, set):
     card = {"year": year, "group": group, "set": set}

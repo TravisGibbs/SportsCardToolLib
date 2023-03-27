@@ -16,10 +16,6 @@ def test_grab_year_links():
     assert len(grab_year_links(["2023", "2022"])) == 2
 
 
-def test_grab_sales():
-    assert len(grab_sales("2022 Mike Trout")) > 0
-
-
 def test_grab_data():
     card_list = grab_card_list(grab_year_links(["1950"]))
     assert type(card_list) == type(list())
