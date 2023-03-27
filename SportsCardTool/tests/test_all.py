@@ -12,6 +12,14 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
+def test_query_builder():
+    qb = QueryBuilder()
+    qb.add_item({"name": "Barry Bonds"})
+    data = qb.grab_data()
+    assert len(data[0]) >= 1000
+    assert data[1] >= 1000
+
+
 def test_grab_year_links():
     assert len(grab_year_links(["2023"])) == 1
     assert len(grab_year_links(["2023", "2022"])) == 2
@@ -35,15 +43,10 @@ def test_process_group_links():
 
 
 def test_grab_data():
-    card_list = grab_card_list(grab_year_links(["2023"]))
+    card_list = grab_card_list(grab_year_links(["1950"]))
     assert type(card_list) == type(list())
     assert len(card_list) > 100
-    assert isinstance(card_list[0], dict)
-
-
-def test_grab_sales():
-    assert len(grab_sales("2022 Mike Trout")) > 0
-    assert len(grab_sales("2019 Shohei Ohtani")) > 0
+    assert type(card_list[0]) == type(dict())
 
 
 def test_dump_date():
@@ -54,10 +57,12 @@ def test_dump_date():
 
 
 def test_get_soup():
-    mock_soup = get_soup(
+    mock_soup_success = get_soup(
         "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
     )
-    assert type(mock_soup) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
+    mock_soup_failure = get_soup("notalink")
+    assert type(mock_soup_success) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
+    assert len(mock_soup_failure.find_all('a')) == 0
 
 
 def test_filter_href():
@@ -69,8 +74,8 @@ def test_filter_href():
     assert len(result) > 0 and len(result) < len(mock_data)
 
 
-def integration_test_grab_and_dump():
-    card_list = grab_card_list(grab_year_links(["2023"]))
+def test_integration_grab_and_dump():
+    card_list = grab_card_list(grab_year_links(["1950"]))
     expected_length = len(card_list)
     dump_data(card_list)
     results = pd.read_csv('demo_cards.csv')
