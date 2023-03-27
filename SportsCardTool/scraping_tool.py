@@ -102,6 +102,7 @@ def parse_panel(panel, year, group, set):
 
     return card
 
+
 def process_group_links(group_links, year):
     card_list = []
     for j in tqdm(range(len(group_links))):
@@ -111,6 +112,7 @@ def process_group_links(group_links, year):
         set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
         card_list.extend(process_set_links(set_links, year, group))
     return card_list
+
 
 def process_set_links(set_links, year, group=None):
     card_list = []
@@ -125,6 +127,7 @@ def process_set_links(set_links, year, group=None):
             card_list.append(card)
     return card_list
 
+
 # Grabs a card list from a list of year links
 def grab_card_list(year_links):
     card_list = []
@@ -137,7 +140,7 @@ def grab_card_list(year_links):
 
         set_links = filter_hrefs(groupus_soupus, "set-")
         group_links = filter_hrefs(groupus_soupus, "index-")
-        
+
         print("proccessing independent sets")
         card_list.extend(process_set_links(set_links, year))
 
