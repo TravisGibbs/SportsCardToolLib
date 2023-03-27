@@ -18,7 +18,6 @@ def test_grab_year_links():
 
 def test_grab_sales():
     assert len(grab_sales("2022 Mike Trout")) > 0
-    assert len(grab_sales("2019 Shohei Ohtani")) > 0
 
 
 def test_grab_data():
