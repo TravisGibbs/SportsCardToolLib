@@ -1,10 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
-from urllib.parse import quote
-import json
 from tqdm import tqdm
 import csv
-import requests
 
 # This script builds a csv from a baseball set list site into a more parsible csv
 # There is a basic descending heiarchy that can be represented by year->group->set->card

@@ -1,4 +1,4 @@
-from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, grab_sales, QueryBuilder
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, QueryBuilder
 from bs4 import BeautifulSoup
 import pandas as pd
 
