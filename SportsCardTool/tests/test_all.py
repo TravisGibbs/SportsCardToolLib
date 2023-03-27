@@ -19,7 +19,7 @@ def test_grab_year_links():
 
 def test_process_set_links():
     cards = process_set_links(
-        ["https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"], 1990
+        ["https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"], "1990"
     )
     assert len(cards) > 40
 
@@ -29,7 +29,7 @@ def test_process_group_links():
         [
             "https://www.sportscardchecklist.com/sport-baseball/year-1990/index-star/trading-card-checklists-and-product-information"
         ],
-        1990,
+        "1990",
     )
     assert len(cards) > 100
 
