@@ -31,10 +31,14 @@ def test_dump_date():
 
 
 def test_get_soup():
-    mock_soup = get_soup(
+    mock_soup_success = get_soup(
         "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
     )
-    assert type(mock_soup) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
+    mock_soup_failure = get_soup(
+        "notalink"
+    )
+    assert type(mock_soup_success) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
+    assert len(mock_soup_failure.find_all('a')) == 0
 
 
 def test_filter_href():

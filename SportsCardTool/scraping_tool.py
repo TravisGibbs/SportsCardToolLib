@@ -58,12 +58,7 @@ def parse_panel(panel, year, group, set):
 
     name_number = card['listing'].split("#")[1]
     card['number'] = name_number.split(" ")[0]
-    name = " ".join(name_number.split(" ")[1:])
-    if "1st Bowman" in name:
-        card["name"] = name.split("1")[0].strip()
-        card["rc"] = True
-    else:
-        card["name"] = name.strip()
+    card['name'] = " ".join(name_number.split(" ")[1:3])
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:
@@ -126,6 +121,7 @@ def grab_card_list(year_links):
                 for player_panel in player_panels:
                     card = parse_panel(player_panel, year, group, set_)
                     card_list.append(card)
+                    
     return card_list
 
 
