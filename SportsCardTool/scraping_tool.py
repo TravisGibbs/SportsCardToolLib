@@ -20,8 +20,8 @@ def filter_hrefs(links, filter):
 
 # Gathers the soup given a href
 def get_soup(href):
-    req = Request(href)
     try:
+        req = Request(href)
         html_page = urlopen(req)
         return BeautifulSoup(html_page, "lxml")
     except Exception:
