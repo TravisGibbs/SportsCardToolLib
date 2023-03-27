@@ -1,10 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
-from urllib.parse import quote
-import json
 from tqdm import tqdm
 import csv
-import requests
 
 # This script builds a csv from a baseball set list site into a more parsible csv
 # There is a basic descending heiarchy that can be represented by year->group->set->card
@@ -23,8 +20,8 @@ def filter_hrefs(links, filter):
 
 # Gathers the soup given a href
 def get_soup(href):
-    req = Request(href)
     try:
+        req = Request(href)
         html_page = urlopen(req)
         return BeautifulSoup(html_page, "lxml")
     except Exception:
@@ -46,17 +43,6 @@ def grab_year_links(year_list):
     return year_links
 
 
-# Grabs Sales from relevant listing
-def grab_sales(listing):
-    r = requests.post(
-        "https://130point.com/wp_pages/sales/getDataParse.php",
-        data={"query": quote(listing), "type": "2", "subcat": "-1"},
-        headers={"X-Requested-With": "XMLHttpRequest"},
-    )
-    data = json.loads(json.loads(r.content)['body'])
-    return data
-
-
 # Parses a given indvidual player panel and returns a dictionary representing an individual cards
 def parse_panel(panel, year, group, set):
     card = {"year": year, "group": group, "set": set}
@@ -72,12 +58,7 @@ def parse_panel(panel, year, group, set):
 
     name_number = card['listing'].split("#")[1]
     card['number'] = name_number.split(" ")[0]
-    name = " ".join(name_number.split(" ")[1:])
-    if "1st Bowman" in name:
-        card["name"] = name.split("1")[0].strip()
-        card["rc"] = True
-    else:
-        card["name"] = name.strip()
+    card['name'] = " ".join(name_number.split(" ")[1:3])
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:
@@ -140,6 +121,7 @@ def grab_card_list(year_links):
                 for player_panel in player_panels:
                     card = parse_panel(player_panel, year, group, set_)
                     card_list.append(card)
+
     return card_list
 
 

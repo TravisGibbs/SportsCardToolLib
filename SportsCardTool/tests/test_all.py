@@ -1,4 +1,4 @@
-from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, grab_sales, QueryBuilder
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, QueryBuilder
 from bs4 import BeautifulSoup
 import pandas as pd
 
@@ -16,10 +16,6 @@ def test_grab_year_links():
     assert len(grab_year_links(["2023", "2022"])) == 2
 
 
-def test_grab_sales():
-    assert len(grab_sales("2022 Mike Trout")) > 0
-
-
 def test_grab_data():
     card_list = grab_card_list(grab_year_links(["1950"]))
     assert type(card_list) == type(list())
@@ -35,10 +31,12 @@ def test_dump_date():
 
 
 def test_get_soup():
-    mock_soup = get_soup(
+    mock_soup_success = get_soup(
         "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
     )
-    assert type(mock_soup) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
+    mock_soup_failure = get_soup("notalink")
+    assert type(mock_soup_success) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', 'lxml'))
+    assert len(mock_soup_failure.find_all('a')) == 0
 
 
 def test_filter_href():
