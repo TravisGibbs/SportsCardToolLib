@@ -121,7 +121,7 @@ def grab_card_list(year_links):
                 for player_panel in player_panels:
                     card = parse_panel(player_panel, year, group, set_)
                     card_list.append(card)
-                    
+
     return card_list
 
 
