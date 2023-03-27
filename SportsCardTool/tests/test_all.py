@@ -1,4 +1,4 @@
-from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, grab_sales
+from SportsCardTool import grab_card_list, dump_data, get_soup, filter_hrefs, grab_year_links, QueryBuilder, process_group_links, process_set_links
 from bs4 import BeautifulSoup
 import pandas as pd
 
@@ -7,6 +7,13 @@ def test_grab_year_links():
     assert len(grab_year_links(["2023"])) == 1
     assert len(grab_year_links(["2023", "2022"])) == 2
 
+def test_process_set_links():
+    cards = process_set_links(["https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"], 1990)
+    assert len(cards) > 40
+
+def test_process_group_links():
+    cards = process_group_links(["https://www.sportscardchecklist.com/sport-baseball/year-1990/index-star/trading-card-checklists-and-product-information"], 1990)
+    assert len(cards) > 100
 
 def test_grab_data():
     card_list = grab_card_list(grab_year_links(["2023"]))

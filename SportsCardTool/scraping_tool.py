@@ -102,6 +102,28 @@ def parse_panel(panel, year, group, set):
 
     return card
 
+def process_group_links(group_links, year):
+    card_list = []
+    for j in tqdm(range(len(group_links))):
+        group_href = group_links[j]
+        group = str(group_href).split("index-")[1].split("/")[0]
+        set_soup = get_soup(group_href)
+        set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
+        card_list.extend(process_set_links(set_links, year, group))
+    return card_list
+
+def process_set_links(set_links, year, group=None):
+    card_list = []
+    for set_link in set_links:
+        set_ = str(set_link).split(year + "-")[1]
+        if group is None:
+            group = set_
+        player_soup = get_soup(set_link)
+        player_panels = player_soup.find_all("div", class_="panel panel-primary")
+        for player_panel in player_panels:
+            card = parse_panel(player_panel, year, group, set_)
+            card_list.append(card)
+    return card_list
 
 # Grabs a card list from a list of year links
 def grab_card_list(year_links):
@@ -113,33 +135,15 @@ def grab_card_list(year_links):
         group_soup = get_soup(year_link)
         groupus_soupus = set(group_soup.findAll('a'))
 
-        group_links = filter_hrefs(groupus_soupus, "index-")
         set_links = filter_hrefs(groupus_soupus, "set-")
-
+        group_links = filter_hrefs(groupus_soupus, "index-")
+        
         print("proccessing independent sets")
-        for k in tqdm(range(len(set_links))):
-            set_link = set_links[k]
-            set_ = str(set_link).split(year + "-")[1]
-            group = set_
-            player_soup = get_soup(set_link)
-            player_panels = player_soup.find_all("div", class_="panel panel-primary")
-            for player_panel in player_panels:
-                card = parse_panel(player_panel, year, group, set_)
-                card_list.append(card)
+        card_list.extend(process_set_links(set_links, year))
 
         print("proccessing multi-sets")
-        for j in tqdm(range(len(group_links))):
-            group_href = group_links[j]
-            group = str(group_href).split("index-")[1].split("/")[0]
-            set_soup = get_soup(group_href)
-            set_links = filter_hrefs(set(set_soup.findAll('a')), "set-")
-            for set_link in set_links:
-                set_ = str(set_link).split(year + "-")[1]
-                player_soup = get_soup(set_link)
-                player_panels = player_soup.find_all("div", class_="panel panel-primary")
-                for player_panel in player_panels:
-                    card = parse_panel(player_panel, year, group, set_)
-                    card_list.append(card)
+        card_list.extend(process_group_links(group_links, year))
+
     return card_list
 
 
