@@ -78,7 +78,6 @@ def parse_panel(panel, year, group, set):
             card['pre_major'] = int(card_bref['debut_year']) > int(year)
         if card_bref["last_year"]:
             card['post_career'] = int(card_bref["last_year"]) < int(year)
-        
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:
