@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import json
 from time import sleep
 
 import unicodedata
