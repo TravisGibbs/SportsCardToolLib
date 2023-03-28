@@ -17,16 +17,16 @@ import pandas as pd
 
 def test_grab_debut_year():
     d = grab_debut_year("1939")
-    assert "Ted Williams" in d['players']
-    assert d["players"]['Ted Williams'] == {
-        'debut_year': '1939',
-        'href': '/players/w/willite01.shtml',
-        'short_name': 'willite01',
-        'debut': 'Apr 20, 1939',
-        'last_game': 'Sep 28, 1960',
-        'last_year': '1960',
-        'WAR': '122.0',
-        'draft_year': None,
+    assert "ted williams" in d['players']
+    assert d["players"]['ted williams'] == {
+        "debut_year": "1939",
+        "last_game": "Sep 28, 1960",
+        "last_year": "1960",
+        "debut": "Apr 20, 1939",
+        "short_name": "willite01",
+        "href": "/players/w/willite01.shtml",
+        "draft_year": None,
+        "WAR": "122.0",
     }
 
 
@@ -35,22 +35,22 @@ def test_grab_debut_dict():
     d = grab_debut_dict(years)
     assert len(d) == 2
     assert len(d['players']) > 10
-    assert "Ted Williams" in d['players']
-    assert d["players"]['Ted Williams'] == {
-        'debut_year': '1939',
-        'href': '/players/w/willite01.shtml',
-        'short_name': 'willite01',
-        'debut': 'Apr 20, 1939',
-        'last_game': 'Sep 28, 1960',
-        'last_year': '1960',
-        'WAR': '122.0',
-        'draft_year': None,
+    assert "ted williams" in d['players']
+    assert d["players"]['ted williams'] == {
+        "debut_year": "1939",
+        "last_game": "Sep 28, 1960",
+        "last_year": "1960",
+        "debut": "Apr 20, 1939",
+        "short_name": "willite01",
+        "href": "/players/w/willite01.shtml",
+        "draft_year": None,
+        "WAR": "122.0",
     }
 
 
 def test_remove_accents():
-    assert remove_accents("Edwin Díaz") == "Edwin Diaz"
-    assert remove_accents("Rafael Devers") == "Rafael Devers"
+    assert remove_accents("Edwin Díaz") == "edwin diaz"
+    assert remove_accents("rafael devers") == "rafael devers"
 
 
 def test_query_builder():

@@ -3,7 +3,7 @@ from urllib.request import Request, urlopen
 from tqdm import tqdm
 import csv
 import json
-from bref_tool import remove_accents
+from SportsCardTool.dev.bref_tool import remove_accents
 
 # This script builds a csv from a baseball set list site into a more parsible csv
 # There is a basic descending heiarchy that can be represented by year->group->set->card
@@ -59,6 +59,8 @@ def parse_panel(panel, year, group, set):
     card['front_img'] = None
     card['back_img'] = None
     card['price'] = 0
+    card['server_pop'] = 0
+    card['user_upload_links'] = []
     card['debut_year'] = None
     card['pre_major'] = None
     card['post_career'] = None
