@@ -8,8 +8,9 @@ import json
 # There is a basic descending heiarchy that can be represented by year->group->set->card
 
 # Load in dictionary of debut and bref info
-with open('./data/bref_data.json') as json_file:
+with open('../data/bref_data.json') as json_file:
     bref_info = json.load(json_file)
+
 
 # Filters a list of links by a given string filter
 def filter_hrefs(links, filter):
@@ -59,10 +60,22 @@ def parse_panel(panel, year, group, set):
     card['price'] = 0
 
     card['listing'] = panel.find("h5").text.strip()
-
     name_number = card['listing'].split("#")[1]
+
     card['number'] = name_number.split(" ")[0]
     card['name'] = " ".join(name_number.split(" ")[1:3])
+
+    if card['name'] in bref_info['players']:
+        card_bref = bref_info['players'][card['name']]
+        card.update(card_bref)
+    else:
+        card['debut'] = None
+        card['debut_year'] = None
+        card['last_year'] = None
+        card['last_game'] = None
+        card['WAR'] = None
+        card['short_name'] = None
+        card['href'] = None
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:
