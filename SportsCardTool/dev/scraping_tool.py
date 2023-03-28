@@ -8,7 +8,7 @@ import json
 # There is a basic descending heiarchy that can be represented by year->group->set->card
 
 # Load in dictionary of debut and bref info
-with open('./dev/data/bref_data.json') as json_file:
+with open('./SportsCardTool/dev/data/bref_data.json') as json_file:
     bref_info = json.load(json_file)
 
 
@@ -69,6 +69,7 @@ def parse_panel(panel, year, group, set):
         card_bref = bref_info['players'][card['name']]
         card.update(card_bref)
     else:
+        card["draft_year"] = None
         card['debut'] = None
         card['debut_year'] = None
         card['last_year'] = None

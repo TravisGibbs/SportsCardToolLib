@@ -19,7 +19,7 @@ def test_grab_debut_dict():
     d = grab_debut_dict(years)
     assert len(d) == 2
     assert len(d['players']) > 10
-    assert "Ted Williams" in d
+    assert "Ted Williams" in d['players']
 
 
 def test_remove_accents():

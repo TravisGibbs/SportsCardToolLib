@@ -15,7 +15,7 @@ def remove_accents(input_str):
 
 def grab_debut_dict(years, allow_repeats=False, dictionary={"years": {}, "players": {}}):
     d = dict()
-    with open("./data/bref_data.json") as file:
+    with open("./SportsCardTool/dev/data/bref_data.json") as file:
         d = json.load(file)
     for year in years:
         if year not in d['years'] or allow_repeats:
