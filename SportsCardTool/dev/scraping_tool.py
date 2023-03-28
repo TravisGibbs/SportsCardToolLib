@@ -2,10 +2,14 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from tqdm import tqdm
 import csv
+import json
 
 # This script builds a csv from a baseball set list site into a more parsible csv
 # There is a basic descending heiarchy that can be represented by year->group->set->card
 
+# Load in dictionary of debut and bref info
+with open('./data/bref_data.json') as json_file:
+    bref_info = json.load(json_file)
 
 # Filters a list of links by a given string filter
 def filter_hrefs(links, filter):
