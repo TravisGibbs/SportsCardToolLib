@@ -58,6 +58,10 @@ def parse_panel(panel, year, group, set):
     card['front_img'] = None
     card['back_img'] = None
     card['price'] = 0
+    card['debut_year'] = None
+    card['pre_major'] = None
+    card['post_career'] = None
+    card['short_name'] = None
 
     card['listing'] = panel.find("h5").text.strip()
     name_number = card['listing'].split("#")[1]
@@ -67,16 +71,14 @@ def parse_panel(panel, year, group, set):
 
     if card['name'] in bref_info['players']:
         card_bref = bref_info['players'][card['name']]
-        card.update(card_bref)
-    else:
-        card["draft_year"] = None
-        card['debut'] = None
-        card['debut_year'] = None
-        card['last_year'] = None
-        card['last_game'] = None
-        card['WAR'] = None
-        card['short_name'] = None
-        card['href'] = None
+        if card_bref["short_name"]:
+            card['short_name'] = card_bref["short_name"]
+        if card_bref['debut_year']:
+            card['debut_year'] = int(card_bref['debut_year']) == int(year)
+            card['pre_major'] = int(card_bref['debut_year']) > int(year)
+        if card_bref["last_year"]:
+            card['post_career'] = int(card_bref["last_year"]) < int(year)
+        
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:

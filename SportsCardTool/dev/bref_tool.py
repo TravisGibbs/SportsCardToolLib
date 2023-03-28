@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
+import json
 
 import unicodedata
 
@@ -24,6 +25,13 @@ def grab_debut_year(year):
     table = soup.find("tbody")
     for row in table.find_all("tr"):
         player = {"debut_year": year}
+        player['last_game'] = None
+        player['last_year'] = None
+        player["debut"] = None
+        player['short_name'] = None
+        player['href'] = None
+        player['draft_year'] = None
+        player['WAR'] = None
         for col in row.find_all("td"):
             col_name = col["data-stat"]
             if col_name == "player":
@@ -32,15 +40,12 @@ def grab_debut_year(year):
                 name = remove_accents(player_link.get_text())
                 player['short_name'] = col['data-append-csv']
             elif col_name == "debut":
-                player["debut"] = None
                 link = col.find("a")
                 if link:
                     link_text = link.get_text()
                     if link_text != "" and link_text is not None:
                         player['debut'] = link.get_text() + ", " + year
             elif col_name == "final_game":
-                player['last_game'] = None
-                player['last_year'] = None
                 game_link = col.find("a")
                 if game_link:
                     game_link_text = game_link.get_text()
@@ -50,7 +55,6 @@ def grab_debut_year(year):
             elif col_name == "WAR":
                 player['WAR'] = col.text
             elif col_name == "draft":
-                player['draft_year'] = None
                 if "in" in col.text:
                     player['draft_year'] = col.text.split("in ")[1].split(" ")[0][:4]
 
