@@ -1,5 +1,4 @@
 import requests
-import urllib.request as urllib2
 from bs4 import BeautifulSoup
 import json
 from time import sleep
@@ -7,7 +6,7 @@ from time import sleep
 import unicodedata
 
 
-# Credit To: https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-normalize-in-a-python-unicode-string
+# Credit To: https://stackoverflow.com/questions/517923
 def remove_accents(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
     only_ascii = nfkd_form.encode('ASCII', 'ignore')
