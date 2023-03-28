@@ -8,7 +8,7 @@ import json
 # There is a basic descending heiarchy that can be represented by year->group->set->card
 
 # Load in dictionary of debut and bref info
-with open('../data/bref_data.json') as json_file:
+with open('./data/bref_data.json') as json_file:
     bref_info = json.load(json_file)
 
 
