@@ -7,9 +7,24 @@ from SportsCardTool import (
     QueryBuilder,
     process_group_links,
     process_set_links,
+    grab_debut_dict,
+    remove_accents,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
+
+
+def test_grab_debut_dict():
+    years = ["1939"]
+    d = grab_debut_dict(years)
+    assert len(d) == 2
+    assert len(d['players']) > 10
+    assert "Ted Williams" in d
+
+
+def test_remove_accents():
+    assert remove_accents("Edwin Díaz") == "Edwin Diaz"
+    assert remove_accents("Rafael Devers") == "Rafael Devers"
 
 
 def test_query_builder():
