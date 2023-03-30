@@ -9,7 +9,7 @@ import unicodedata
 def remove_accents(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
     only_ascii = nfkd_form.encode('ASCII', 'ignore')
-    return only_ascii.decode()
+    return only_ascii.decode().lower()
 
 
 def grab_debut_year(year):
