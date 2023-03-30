@@ -1,19 +1,50 @@
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
+from typing import Dict
+from typing import List
+
+
+"""
+This File contains tools for searching baseball reference.
+"""
 
 import unicodedata
 
 
-# Credit To: https://stackoverflow.com/questions/517923
-def remove_accents(input_str):
-    nfkd_form = unicodedata.normalize('NFKD', input_str)
+def remove_accents(input: str) -> str:
+    """Removes accent marks and capitlization from string.
+
+    Standardizing strings makes matching between cardlists and bref possible.
+    Credit To: https://stackoverflow.com/questions/517923
+
+    Args:
+        input: A string to be modified.
+
+    Returns:
+        An output string that is lowered and removes all non standard characthers.
+
+    """
+    nfkd_form = unicodedata.normalize('NFKD', input)
     only_ascii = nfkd_form.encode('ASCII', 'ignore')
     return only_ascii.decode()
 
 
-def grab_debut_year(year):
-    year_dictionary = {"players": {}}
+def grab_debut_year(year: str) -> Dict:
+    """Grabs bref info for all players who debuted in a given year.
+
+    Args:
+        year: A string containing a year to be searching on baseball reference
+        IE: "2017"
+
+    Returns:
+        A dictionary with the players stored in a dictionary keyed by their names.
+
+        Note this function sleeps between each call to respect baseball reference's
+        policies, please do not modify.
+
+    """
+    year_dictionary = {}
     print("scraping year " + year)
     url = "https://www.baseball-reference.com/leagues/majors/" + year + "-debuts.shtml"
     # Sleep before firing requests to respect baseball reference guidelines
@@ -57,15 +88,46 @@ def grab_debut_year(year):
                 if "in" in col.text:
                     player['draft_year'] = col.text.split("in ")[1].split(" ")[0][:4]
 
-        year_dictionary["players"][name] = player
+        year_dictionary[name] = player
     return year_dictionary
 
 
-def grab_debut_dict(years, allow_repeats=False, dictionary={"years": {}, "players": {}}):
+def grab_debut_dict(
+    years: List[str], allow_repeats: bool = False, dictionary: Dict = {"years": {}, "players": {}}
+) -> dict:
+    """Master function that allows users to search accross multiple years
+
+    Args:
+        years: A list of strings representing years.
+        IE: ["1940",  "1941"]
+
+        allow_repeats: If True will search a year again even if it
+        is already in passed in dictionary.
+
+        dictionary: A dict that defualts to empty with the following format:
+            {
+                "years": {
+                    "1939": True
+                }
+                "players": {
+                    "Ted Williams" : {
+
+                    }
+                }
+            }
+
+    Returns:
+        A dictionary in the same format as what is passed in
+        with player info from all debut years.
+
+    """
     for year in years:
         if year not in dictionary['years'] or allow_repeats:
             year_dictionary = grab_debut_year(year)
-            dictionary['players'].update(year_dictionary['players'])
+            dictionary['players'].update(year_dictionary)
             # Flag year to avoid repeated searches
             dictionary["years"][year] = True
     return dictionary
+
+
+
