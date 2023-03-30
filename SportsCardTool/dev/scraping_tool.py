@@ -1,19 +1,36 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from tqdm import tqdm
+from bs4.element import Tag
+from typing import Tuple
+from typing import List
+from typing import Dict
 import csv
 import json
 
-# This script builds a csv from a baseball set list site into a more parsible csv
-# There is a basic descending heiarchy that can be represented by year->group->set->card
+"""
+This file contains the main scraping tool and helper functions.
+"""
+
 
 # Load in dictionary of debut and bref info
 with open('./SportsCardTool/dev/data/bref_data.json') as json_file:
     bref_info = json.load(json_file)
 
 
-# Filters a list of links by a given string filter
-def filter_hrefs(links, filter):
+def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
+    """Filters tag objects according to filter and returns matching href strings.
+
+    Returns a list of the href strings inside of each tag if they contain the filter string.
+
+    Args:
+        links: List of bs4 tag objects that may or may not have href
+        filter: String that is used to filter.
+
+    Returns:
+        A list of strings, each one an href that contains the filter
+
+    """
     hrefs = []
     for link in links:
         href = link.get('href')
@@ -23,8 +40,21 @@ def filter_hrefs(links, filter):
     return hrefs
 
 
-# Gathers the soup given a href
-def get_soup(href):
+def get_soup(href: str) -> BeautifulSoup:
+    """Gets a BeautifulSoup object given an href string.
+
+    The BeautifulSoup object is gathered by making a request to the page and
+    parsing the response via an lxml parser. If the request fails or the parsing
+    fails an empty BeatifulSoup object will be returned.
+
+    Args:
+        href: A string containing the href of a webpage to turned to soup.
+
+    Returns:
+        A BeautifulSoup object which will contain the contents of the webpage or
+        be empty if the request or parsing fails.
+
+    """
     try:
         req = Request(href)
         html_page = urlopen(req)
@@ -34,8 +64,21 @@ def get_soup(href):
         return BeautifulSoup("<HTML></HTML>", "lxml")
 
 
-# Grab links to years from list of selections
-def grab_year_links(year_list):
+def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
+    """Takes a list of years and finds link Tags for each year on SportsCardsChecklist.com.
+
+    Args:
+        year_list: List of strings with each representing a numeric year IE: ['2015', '2016']
+
+    Returns:
+        A list of tuples with the first value being an <a> tag that contained any one of
+        the years specified and the second value being a str representing the year.
+
+        IE: (bs4.element.Tag, "2015")
+
+        Note that thereis currently a bug where years on the website are parsed based on first year in link
+        which could cause unexpected behaviors IE '2003-07' would be parsed as 2003.
+    """
     print(year_list)
     year_links = []
 
@@ -48,8 +91,47 @@ def grab_year_links(year_list):
     return year_links
 
 
-# Parses a given indvidual player panel and returns a dictionary representing an individual cards
-def parse_panel(panel, year, group, set):
+def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
+    """Takes in a panel and other gathered info and creates a card dict to be returned.
+
+    Args:
+        panel: A html tag containing all of the players info.
+        year: A string representing the year the card belongs to.
+        Group: A string representing the group the card belongs to
+        Set: A string representing the set the card belongs to.
+
+    Returns:
+        A dictionary containing all of the data that was able to extracted.
+        If the players name was previously saved and then matched, this
+        card will also show how it was created reletive to the players career.
+
+        Example of a card dict:
+        {
+            'year': '2019',
+            'group': 'topps-582montgomeryclubboxset-baseball-card-checklist',
+            'set': 'topps-582montgomeryclubboxset-baseball-card-checklist',
+            'serial': 0,
+            'auto': False,
+            'mem': False,
+            'rc': False,
+            'front_img': 'https://www.gletech.com/StockPhotos/Baseball/2019/181710/front_thumb_8744223.jpg',
+            'back_img': 'https://www.gletech.com/StockPhotos/Baseball/2019/181710/back_thumb_8744223.jpg',
+            'price': 0,
+            'server_pop': 0,
+            'user_upload_links': [],
+            'debut_year': False,
+            'pre_major': False,
+            'post_career': None,
+            'short_name': 'acunaro01',
+            'listing': '2019 Topps 582 Montgomery Club Box Set  #1 Ronald Acuna Jr.',
+            'number': '1',
+            'name': 'ronald acuna jr.',
+            'team': 'Atlanta Braves'
+        }
+
+        Note the listing parser to find player names still struggles identifying
+        several types of cards (team cards, multi player, checklist).
+    """
     card = {"year": year, "group": group, "set": set}
     card["serial"] = 0
     card["auto"] = False
@@ -103,7 +185,18 @@ def parse_panel(panel, year, group, set):
     return card
 
 
-def process_group_links(group_links, year):
+def process_group_links(group_links: List[str], year: str) -> List[Dict]:
+    """Proccesses group links into sets and then returns all cards in the group.
+
+    Args:
+        group_links: A list of href strings.
+        year: A string representing the year the cards belongs to.
+
+    Returns:
+        A list of card dictionaries as proccessed by parse_panel. The cards
+        returned will have a reference to the year, group, and set respectively.
+
+    """
     card_list = []
     for j in tqdm(range(len(group_links))):
         group_href = group_links[j]
@@ -114,7 +207,20 @@ def process_group_links(group_links, year):
     return card_list
 
 
-def process_set_links(set_links, year, group=None):
+def process_set_links(set_links: List[str], year: str, group: str | None = None) -> List[Dict]:
+    """Proccesses set links and then returns all cards in the sets.
+
+    Args:
+        set_links: A list of href strings.
+        year: A string representing the year the cards belongs to.
+
+    Returns:
+        A list of card dictionaries as proccessed by parse_panel. The cards
+        returned will have a reference to the year, group, and set respectively.
+
+        Note if not group is detected group is set to be equal to set to enable easy
+        future searching.
+    """
     card_list = []
     for set_link in set_links:
         set_ = str(set_link).split(year + "-")[1]
@@ -128,8 +234,20 @@ def process_set_links(set_links, year, group=None):
     return card_list
 
 
-# Grabs a card list from a list of year links
-def grab_card_list(year_links):
+def grab_card_list(year_links: List[str]) -> List[Dict]:
+    """Finds all groups and sets in a year and returns all cards.
+
+    Args:
+        year_links: A list of href strings to different years to be parsed
+
+    Returns:
+        A list of all cards from different groups/sets in the year as parsed by
+        parse_panel.
+
+        Note performance is still slow due to network calls and the amount of
+        data contained in years grows exponentially over time.
+
+    """
     card_list = []
     # Main parsing loop
     for year_link in year_links:
@@ -150,8 +268,14 @@ def grab_card_list(year_links):
     return card_list
 
 
-def dump_data(card_list, csv_name='demo_cards.csv'):
-    # Dump data into csv
+def dump_data(card_list: List[Dict], csv_name: str = 'demo_cards.csv'):
+    """Takes a list of dictionaries and creates a new csv file containing them
+
+    Args:
+        card_list: A list of dictionaries representing cards.
+        csv_name: A name/path for output file defaults to demo_cards.csv
+
+    """
     with open(csv_name, 'w', newline='') as output_file:
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
