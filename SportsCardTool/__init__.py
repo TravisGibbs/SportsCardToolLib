@@ -9,5 +9,5 @@ from .dev.scraping_tool import (
     process_group_links,
     process_set_links,
 )
-from .searching_tool import QueryBuilder
+from .searching_tool import query_builder
 from .dev.bref_tool import remove_accents, grab_debut_dict, grab_debut_year
