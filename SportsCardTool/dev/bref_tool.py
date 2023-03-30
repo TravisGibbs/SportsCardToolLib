@@ -27,7 +27,7 @@ def remove_accents(input: str) -> str:
     """
     nfkd_form = unicodedata.normalize('NFKD', input)
     only_ascii = nfkd_form.encode('ASCII', 'ignore')
-    return only_ascii.decode()
+    return only_ascii.decode().lower()
 
 
 def grab_debut_year(year: str) -> Dict:

@@ -49,8 +49,8 @@ def test_grab_debut_dict():
 
 
 def test_remove_accents():
-    assert remove_accents("Edwin Díaz") == "Edwin Diaz"
-    assert remove_accents("Rafael Devers") == "Rafael Devers"
+    assert remove_accents("Edwin Díaz") == "edwin diaz"
+    assert remove_accents("rafael devers") == "rafael devers"
 
 
 def test_query_builder():

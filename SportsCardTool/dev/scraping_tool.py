@@ -7,6 +7,7 @@ from typing import List
 from typing import Dict
 import csv
 import json
+from SportsCardTool.dev.bref_tool import remove_accents
 
 """
 This file contains the main scraping tool and helper functions.
@@ -140,19 +141,32 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card['front_img'] = None
     card['back_img'] = None
     card['price'] = 0
+    card['server_pop'] = 0
+    card['user_upload_links'] = []
     card['debut_year'] = None
     card['pre_major'] = None
     card['post_career'] = None
     card['short_name'] = None
+    card_bref = None
 
     card['listing'] = panel.find("h5").text.strip()
     name_number = card['listing'].split("#")[1]
 
     card['number'] = name_number.split(" ")[0]
-    card['name'] = " ".join(name_number.split(" ")[1:3])
+    card['name'] = remove_accents(" ".join(name_number.split(" ")[1:]))
 
     if card['name'] in bref_info['players']:
         card_bref = bref_info['players'][card['name']]
+    elif card["name"].split(" jr.")[0] in bref_info['players']:
+        card_bref = bref_info['players'][card["name"].split(" jr.")[0]]
+    elif card["name"].split(" sr.")[0] in bref_info['players']:
+        card_bref = bref_info['players'][card["name"].split(" sr.")[0]]
+    elif " ".join(card["name"].split(" ")[0:2]) in bref_info['players']:
+        card_bref = bref_info['players'][" ".join(card["name"].split(" ")[0:2])]
+    elif " ".join(card["name"].split(" ")[0:3]) in bref_info['players']:
+        card_bref = bref_info['players'][" ".join(card["name"].split(" ")[0:3])]
+
+    if card_bref:
         if card_bref["short_name"]:
             card['short_name'] = card_bref["short_name"]
         if card_bref['debut_year']:
