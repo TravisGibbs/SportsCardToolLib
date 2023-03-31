@@ -128,6 +128,3 @@ def grab_debut_dict(
             # Flag year to avoid repeated searches
             dictionary["years"][year] = True
     return dictionary
-
-
-
