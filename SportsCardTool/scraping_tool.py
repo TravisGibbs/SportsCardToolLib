@@ -52,7 +52,7 @@ def grab_bref_info(name: str) -> Dict:
         a placeholder dictionary.
 
     """
-    card_bref = None
+    card_bref = {"short_name": None, "debut_year": None, "last_year": None}
 
     if name in bref_info['players']:
         card_bref = bref_info['players'][name]
@@ -160,10 +160,11 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
 
     card_bref = grab_bref_info(card["name"].lower())
 
-    if card_bref:
-        card['short_name'] = card_bref["short_name"]
-        card['debut_year'] = int(card_bref['debut_year']) == int(year)
+    card['short_name'] = card_bref["short_name"]    
+    if card_bref["debut_year"]:
         card['pre_major'] = int(card_bref['debut_year']) > int(year)
+        card['debut_year'] = card_bref['debut_year'] == year
+    if card_bref["last_year"]:
         card['post_career'] = int(card_bref["last_year"]) < int(year)
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
