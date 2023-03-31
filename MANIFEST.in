@@ -7,6 +7,8 @@ include .bumpversion.cfg
 include pyproject.toml
 include Makefile
 include SportsCardTool/data/bref_data.json
+include docs/Makefile
+include docs/SportsCardTool.rst
 
 prune .github
 exclude .gitignore
