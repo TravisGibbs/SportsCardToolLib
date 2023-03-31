@@ -160,7 +160,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
 
     card_bref = grab_bref_info(card["name"].lower())
 
-    card['short_name'] = card_bref["short_name"]    
+    card['short_name'] = card_bref["short_name"]
     if card_bref["debut_year"]:
         card['pre_major'] = int(card_bref['debut_year']) > int(year)
         card['debut_year'] = card_bref['debut_year'] == year
