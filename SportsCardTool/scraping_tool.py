@@ -238,7 +238,7 @@ def process_set_links(set_links: List[str], year: str, group: str = "") -> List[
     card_list = []
     for set_link in set_links:
         set_ = str(set_link).split(year + "-")[1]
-        if group is "":
+        if group == "":
             group = set_
         player_soup = get_soup(set_link)
         player_panels = player_soup.find_all("div", class_="panel panel-primary")
