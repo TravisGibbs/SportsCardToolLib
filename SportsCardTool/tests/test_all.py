@@ -4,29 +4,37 @@ from SportsCardTool import (
     get_soup,
     filter_hrefs,
     grab_year_links,
-    QueryBuilder,
+    query_builder,
     process_group_links,
     process_set_links,
     grab_debut_dict,
     remove_accents,
     grab_debut_year,
+    grab_bref_info,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
 
 
+def test_grab_bref_info():
+    bref_info = grab_bref_info("ted williams")
+    assert bref_info["short_name"] == "willite01"
+    assert bref_info["debut_year"] == '1939'
+    assert bref_info['last_year'] == "1960"
+
+
 def test_grab_debut_year():
     d = grab_debut_year("1939")
-    assert "ted williams" in d['players']
-    assert d["players"]['ted williams'] == {
-        "debut_year": "1939",
-        "last_game": "Sep 28, 1960",
-        "last_year": "1960",
-        "debut": "Apr 20, 1939",
-        "short_name": "willite01",
-        "href": "/players/w/willite01.shtml",
-        "draft_year": None,
-        "WAR": "122.0",
+    assert "Ted Williams" in d
+    assert d['Ted Williams'] == {
+        'debut_year': '1939',
+        'last_game': 'Sep 28, 1960',
+        'last_year': '1960',
+        'debut': 'Apr 20, 1939',
+        'short_name': 'willite01',
+        'href': '/players/w/willite01.shtml',
+        'draft_year': None,
+        'WAR': '121.8',
     }
 
 
@@ -35,26 +43,26 @@ def test_grab_debut_dict():
     d = grab_debut_dict(years)
     assert len(d) == 2
     assert len(d['players']) > 10
-    assert "ted williams" in d['players']
-    assert d["players"]['ted williams'] == {
-        "debut_year": "1939",
-        "last_game": "Sep 28, 1960",
-        "last_year": "1960",
-        "debut": "Apr 20, 1939",
-        "short_name": "willite01",
-        "href": "/players/w/willite01.shtml",
-        "draft_year": None,
-        "WAR": "122.0",
+    assert "Ted Williams" in d['players']
+    assert d["players"]['Ted Williams'] == {
+        'debut_year': '1939',
+        'last_game': 'Sep 28, 1960',
+        'last_year': '1960',
+        'debut': 'Apr 20, 1939',
+        'short_name': 'willite01',
+        'href': '/players/w/willite01.shtml',
+        'draft_year': None,
+        'WAR': '121.8',
     }
 
 
 def test_remove_accents():
-    assert remove_accents("Edwin Díaz") == "edwin diaz"
-    assert remove_accents("rafael devers") == "rafael devers"
+    assert remove_accents("Edwin Díaz") == "Edwin Diaz"
+    assert remove_accents("Rafael Devers") == "Rafael Devers"
 
 
 def test_query_builder():
-    qb = QueryBuilder()
+    qb = query_builder()
     qb.add_item({"name": "Barry Bonds"})
     data = qb.grab_data()
     assert len(data[0]) >= 1000
