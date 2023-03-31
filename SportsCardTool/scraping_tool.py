@@ -221,7 +221,7 @@ def process_group_links(group_links: List[str], year: str) -> List[Dict]:
     return card_list
 
 
-def process_set_links(set_links: List[str], year: str, group: str | None = None) -> List[Dict]:
+def process_set_links(set_links: List[str], year: str, group: str = "") -> List[Dict]:
     """Proccesses set links and then returns all cards in the sets.
 
     Args:
@@ -238,7 +238,7 @@ def process_set_links(set_links: List[str], year: str, group: str | None = None)
     card_list = []
     for set_link in set_links:
         set_ = str(set_link).split(year + "-")[1]
-        if group is None:
+        if group is "":
             group = set_
         player_soup = get_soup(set_link)
         player_panels = player_soup.find_all("div", class_="panel panel-primary")
