@@ -41,6 +41,33 @@ def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
     return hrefs
 
 
+def grab_bref_info(name: str) -> Dict:
+    """Tries different variations of name to find bref_info
+
+    Args:
+        name: A string containing the player name.
+
+    Returns:
+        A dict containing bref_info for the given player or
+        a placeholder dictionary.
+
+    """
+    card_bref = None
+
+    if name in bref_info['players']:
+        card_bref = bref_info['players'][name]
+    elif name.split(" jr.")[0] in bref_info['players']:
+        card_bref = bref_info['players'][name.split(" jr.")[0]]
+    elif name.split(" sr.")[0] in bref_info['players']:
+        card_bref = bref_info['players'][name.split(" sr.")[0]]
+    elif " ".join(name.split(" ")[0:2]) in bref_info['players']:
+        card_bref = bref_info['players'][" ".join(name.split(" ")[0:2])]
+    elif " ".join(name.split(" ")[0:3]) in bref_info['players']:
+        card_bref = bref_info['players'][" ".join(name.split(" ")[0:3])]
+
+    return card_bref
+
+
 def get_soup(href: str) -> BeautifulSoup:
     """Gets a BeautifulSoup object given an href string.
 
@@ -106,30 +133,6 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
         If the players name was previously saved and then matched, this
         card will also show how it was created reletive to the players career.
 
-        Example of a card dict:
-        {
-            'year': '2019',
-            'group': 'topps-582montgomeryclubboxset-baseball-card-checklist',
-            'set': 'topps-582montgomeryclubboxset-baseball-card-checklist',
-            'serial': 0,
-            'auto': False,
-            'mem': False,
-            'rc': False,
-            'front_img': 'https://www.gletech.com/StockPhotos/Baseball/2019/181710/front_thumb_8744223.jpg',
-            'back_img': 'https://www.gletech.com/StockPhotos/Baseball/2019/181710/back_thumb_8744223.jpg',
-            'price': 0,
-            'server_pop': 0,
-            'user_upload_links': [],
-            'debut_year': False,
-            'pre_major': False,
-            'post_career': None,
-            'short_name': 'acunaro01',
-            'listing': '2019 Topps 582 Montgomery Club Box Set  #1 Ronald Acuna Jr.',
-            'number': '1',
-            'name': 'ronald acuna jr.',
-            'team': 'Atlanta Braves'
-        }
-
         Note the listing parser to find player names still struggles identifying
         several types of cards (team cards, multi player, checklist).
     """
@@ -155,25 +158,13 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card['number'] = name_number.split(" ")[0]
     card['name'] = remove_accents(" ".join(name_number.split(" ")[1:]))
 
-    if card['name'] in bref_info['players']:
-        card_bref = bref_info['players'][card['name']]
-    elif card["name"].split(" jr.")[0] in bref_info['players']:
-        card_bref = bref_info['players'][card["name"].split(" jr.")[0]]
-    elif card["name"].split(" sr.")[0] in bref_info['players']:
-        card_bref = bref_info['players'][card["name"].split(" sr.")[0]]
-    elif " ".join(card["name"].split(" ")[0:2]) in bref_info['players']:
-        card_bref = bref_info['players'][" ".join(card["name"].split(" ")[0:2])]
-    elif " ".join(card["name"].split(" ")[0:3]) in bref_info['players']:
-        card_bref = bref_info['players'][" ".join(card["name"].split(" ")[0:3])]
+    card_bref = grab_bref_info(card["name"].lower())
 
     if card_bref:
-        if card_bref["short_name"]:
-            card['short_name'] = card_bref["short_name"]
-        if card_bref['debut_year']:
-            card['debut_year'] = int(card_bref['debut_year']) == int(year)
-            card['pre_major'] = int(card_bref['debut_year']) > int(year)
-        if card_bref["last_year"]:
-            card['post_career'] = int(card_bref["last_year"]) < int(year)
+        card['short_name'] = card_bref["short_name"]
+        card['debut_year'] = int(card_bref['debut_year']) == int(year)
+        card['pre_major'] = int(card_bref['debut_year']) > int(year)
+        card['post_career'] = int(card_bref["last_year"]) < int(year)
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:

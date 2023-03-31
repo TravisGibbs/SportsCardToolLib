@@ -104,17 +104,8 @@ def grab_debut_dict(
         allow_repeats: If True will search a year again even if it
         is already in passed in dictionary.
 
-        dictionary: A dict that defualts to empty with the following format:
-            {
-                "years": {
-                    "1939": True
-                }
-                "players": {
-                    "Ted Williams" : {
-
-                    }
-                }
-            }
+        dictionary: A dict that defualts to two empty keyed dicts for years
+        and players.
 
     Returns:
         A dictionary in the same format as what is passed in

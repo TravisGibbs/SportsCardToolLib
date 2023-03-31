@@ -10,9 +10,17 @@ from SportsCardTool import (
     grab_debut_dict,
     remove_accents,
     grab_debut_year,
+    grab_bref_info,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
+
+
+def test_grab_bref_info():
+    bref_info = grab_bref_info("ted williams")
+    assert bref_info["short_name"] == "willite01"
+    assert bref_info["debut_year"] == '1939'
+    assert bref_info['last_year'] == "1960"
 
 
 def test_grab_debut_year():
