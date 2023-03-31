@@ -1,5 +1,5 @@
 from ._version import __version__
-from .dev.scraping_tool import (
+from .scraping_tool import (
     filter_hrefs,
     get_soup,
     parse_panel,
@@ -10,4 +10,4 @@ from .dev.scraping_tool import (
     process_set_links,
 )
 from .searching_tool import query_builder
-from .dev.bref_tool import remove_accents, grab_debut_dict, grab_debut_year
+from .bref_tool import remove_accents, grab_debut_dict, grab_debut_year

@@ -7,7 +7,7 @@ from typing import List
 from typing import Dict
 import csv
 import json
-from SportsCardTool.dev.bref_tool import remove_accents
+from SportsCardTool.bref_tool import remove_accents
 
 """
 This file contains the main scraping tool and helper functions.
@@ -15,7 +15,7 @@ This file contains the main scraping tool and helper functions.
 
 
 # Load in dictionary of debut and bref info
-with open('./SportsCardTool/dev/data/bref_data.json') as json_file:
+with open('./SportsCardTool/data/bref_data.json') as json_file:
     bref_info = json.load(json_file)
 
 
