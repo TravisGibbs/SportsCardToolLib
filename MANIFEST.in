@@ -8,6 +8,7 @@ include pyproject.toml
 include Makefile
 include SportsCardTool/data/bref_data.json
 include docs/Makefile
+include .nojekyll
 
 recursive-include docs *.bat
 recursive-include docs *.buildinfo
