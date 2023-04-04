@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>SportsCardTool package &#8212; SportsCardTool 0.2.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SportsCardTool" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="sportscardtool-package">
+<h1>SportsCardTool package<a class="headerlink" href="#sportscardtool-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-SportsCardTool.bref_tool">
+<span id="sportscardtool-bref-tool-module"></span><h2>SportsCardTool.bref_tool module<a class="headerlink" href="#module-SportsCardTool.bref_tool" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.bref_tool.grab_debut_dict">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.bref_tool.</span></span><span class="sig-name descname"><span class="pre">grab_debut_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_repeats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'players':</span> <span class="pre">{},</span> <span class="pre">'years':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#SportsCardTool.bref_tool.grab_debut_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Master function that allows users to search accross multiple years</p>
+<dl>
+<dt>Args:</dt><dd><p>years: A list of strings representing years.
+IE: [“1940”,  “1941”]</p>
+<p>allow_repeats: If True will search a year again even if it
+is already in passed in dictionary.</p>
+<p>dictionary: A dict that defualts to two empty keyed dicts for years
+and players.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A dictionary in the same format as what is passed in
+with player info from all debut years.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.bref_tool.grab_debut_year">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.bref_tool.</span></span><span class="sig-name descname"><span class="pre">grab_debut_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#SportsCardTool.bref_tool.grab_debut_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grabs bref info for all players who debuted in a given year.</p>
+<dl>
+<dt>Args:</dt><dd><p>year: A string containing a year to be searching on baseball reference
+IE: “2017”</p>
+</dd>
+<dt>Returns:</dt><dd><p>A dictionary with the players stored in a dictionary keyed by their names.</p>
+<p>Note this function sleeps between each call to respect baseball reference’s
+policies, please do not modify.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.bref_tool.remove_accents">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.bref_tool.</span></span><span class="sig-name descname"><span class="pre">remove_accents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#SportsCardTool.bref_tool.remove_accents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes accent marks and capitlization from string.</p>
+<p>Standardizing strings makes matching between cardlists and bref possible.
+Credit To: <a class="reference external" href="https://stackoverflow.com/questions/517923">https://stackoverflow.com/questions/517923</a></p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>input: A string to be modified.</p>
+</dd>
+<dt>Returns:</dt><dd><p>An output string that is lowered and removes all non standard characthers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-SportsCardTool.scraping_tool">
+<span id="sportscardtool-scraping-tool-module"></span><h2>SportsCardTool.scraping_tool module<a class="headerlink" href="#module-SportsCardTool.scraping_tool" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.dump_data">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">dump_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">card_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'demo_cards.csv'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SportsCardTool.scraping_tool.dump_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of dictionaries and creates a new csv file containing them</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>card_list: A list of dictionaries representing cards.
+csv_name: A name/path for output file defaults to demo_cards.csv</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.filter_hrefs">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">filter_hrefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tag</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.filter_hrefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters tag objects according to filter and returns matching href strings.</p>
+<p>Returns a list of the href strings inside of each tag if they contain the filter string.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>links: List of bs4 tag objects that may or may not have href
+filter: String that is used to filter.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of strings, each one an href that contains the filter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.get_soup">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">get_soup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">href</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">BeautifulSoup</span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.get_soup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a BeautifulSoup object given an href string.</p>
+<p>The BeautifulSoup object is gathered by making a request to the page and
+parsing the response via an lxml parser. If the request fails or the parsing
+fails an empty BeatifulSoup object will be returned.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>href: A string containing the href of a webpage to turned to soup.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A BeautifulSoup object which will contain the contents of the webpage or
+be empty if the request or parsing fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.grab_bref_info">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">grab_bref_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.grab_bref_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries different variations of name to find bref_info</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>name: A string containing the player name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A dict containing bref_info for the given player or
+a placeholder dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.grab_card_list">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">grab_card_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.grab_card_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all groups and sets in a year and returns all cards.</p>
+<dl>
+<dt>Args:</dt><dd><p>year_links: A list of href strings to different years to be parsed</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of all cards from different groups/sets in the year as parsed by
+parse_panel.</p>
+<p>Note performance is still slow due to network calls and the amount of
+data contained in years grows exponentially over time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.grab_year_links">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">grab_year_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tag</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.grab_year_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of years and finds link Tags for each year on SportsCardsChecklist.com.</p>
+<dl>
+<dt>Args:</dt><dd><p>year_list: List of strings with each representing a numeric year IE: [‘2015’, ‘2016’]</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of tuples with the first value being an &lt;a&gt; tag that contained any one of
+the years specified and the second value being a str representing the year.</p>
+<p>IE: (bs4.element.Tag, “2015”)</p>
+<p>Note that thereis currently a bug where years on the website are parsed based on first year in link
+which could cause unexpected behaviors IE ‘2003-07’ would be parsed as 2003.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.parse_panel">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">parse_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.parse_panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a panel and other gathered info and creates a card dict to be returned.</p>
+<dl>
+<dt>Args:</dt><dd><p>panel: A html tag containing all of the players info.
+year: A string representing the year the card belongs to.
+Group: A string representing the group the card belongs to
+Set: A string representing the set the card belongs to.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A dictionary containing all of the data that was able to extracted.
+If the players name was previously saved and then matched, this
+card will also show how it was created reletive to the players career.</p>
+<p>Note the listing parser to find player names still struggles identifying
+several types of cards (team cards, multi player, checklist).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.process_group_links">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">process_group_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.process_group_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proccesses group links into sets and then returns all cards in the group.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>group_links: A list of href strings.
+year: A string representing the year the cards belongs to.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of card dictionaries as proccessed by parse_panel. The cards
+returned will have a reference to the year, group, and set respectively.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SportsCardTool.scraping_tool.process_set_links">
+<span class="sig-prename descclassname"><span class="pre">SportsCardTool.scraping_tool.</span></span><span class="sig-name descname"><span class="pre">process_set_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">set_links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SportsCardTool.scraping_tool.process_set_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proccesses set links and then returns all cards in the sets.</p>
+<dl>
+<dt>Args:</dt><dd><p>set_links: A list of href strings.
+year: A string representing the year the cards belongs to.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of card dictionaries as proccessed by parse_panel. The cards
+returned will have a reference to the year, group, and set respectively.</p>
+<p>Note if not group is detected group is set to be equal to set to enable easy
+future searching.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-SportsCardTool.searching_tool">
+<span id="sportscardtool-searching-tool-module"></span><h2>SportsCardTool.searching_tool module<a class="headerlink" href="#module-SportsCardTool.searching_tool" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SportsCardTool.searching_tool.query_builder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SportsCardTool.searching_tool.</span></span><span class="sig-name descname"><span class="pre">query_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'http://flask-cards-env.eba-gsyr32jx.us-east-2.elasticbeanstalk.com/api/v1/sportscards/search?'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SportsCardTool.searching_tool.query_builder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The query_builder class allows for quick queries to SportsCardTool’s API</p>
+<p>The API can also be accessed manually for now, but this class helps build queries progmatically.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>query: A string containing the query to the API
+terms: A int counting the number of terms in query</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SportsCardTool.searching_tool.query_builder.add_item">
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SportsCardTool.searching_tool.query_builder.add_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds items from a dictionary of key value pairs to the query.</p>
+<p>Key value pairs are parsed into url params. In the future we would like to support
+clauses and conditionals, but currently we support the following:</p>
+<p>Possible keys: [name, team, group, set, year, serial, auto, mem, contains]
+Specify multi value queries as comma seperated string IE {“name”: “Rafael Devers,Juan Soto”}
+Searching via contains key checks if string is contained in the listing (non-case sensitive)</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>filters: A dictionary keyed by term and valued with a string containing all desired values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SportsCardTool.searching_tool.query_builder.grab_data">
+<span class="sig-name descname"><span class="pre">grab_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SportsCardTool.searching_tool.query_builder.grab_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes query as defined by class atribute.</p>
+<p>Pages through results produced by query string untill
+it hits the min results argument or runs out of data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>min_results: An int specifying how many results at
+a minimum to return.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A tuples where the first value is a list of dictionarties of results
+and the second value is an int with the total number of results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SportsCardTool</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">SportsCardTool</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SportsCardTool package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">SportsCardTool</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">SportsCardTool</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Travis Gibbs.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/SportsCardTool.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

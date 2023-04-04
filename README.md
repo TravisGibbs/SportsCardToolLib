@@ -9,7 +9,9 @@
 
 SportsCardTool is designed to gather card data and track collections of cards. We hope to build the modern dynamic checklist and price book.
 
-Currently SportsCardTool provides the ability to gather all baseball card setlists. In the future these setlists will be prescraped, allowing for search and tracking capabilities. We would like to drive price tracking via users which would help dectralize some of the larger data collection.
+Currently SportsCardTool provides the ability to gather all baseball card setlists and to search prescraped data via data API and Querybuilder tool.
+
+Potential contributors should check out [SportsCardToolServer](https://github.com/TravisGibbs/SportsCardToolServer).
 
 ## Install it from PyPI
 
@@ -35,7 +37,8 @@ dump_data(card_list, "2023_cards.csv")
 
 ```
 
-Grabbing cards from scraped data
+Grabbing cards from scraped data via code:
+Also accessible directly [here](https://travisapi.pythonanywhere.com/api/v1/sportscards/search?)!
 
 ```py
 
