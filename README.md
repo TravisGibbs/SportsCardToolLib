@@ -28,10 +28,10 @@ from SportsCardTool import grab_card_list, dump_data, grab_year_links
 
 # Find All Cards for 2023 Season, returned as list of dictionaries
 year_links = grab_year_links(["2023"])
-card_list = grab_card_list(year_link)
+card_list = grab_card_list(year_links)
 
 # Create CSV to allow for manipulation via pandas
-dump_data(mock_data, "2023_cards.csv")
+dump_data(card_list, "2023_cards.csv")
 
 ```
 
