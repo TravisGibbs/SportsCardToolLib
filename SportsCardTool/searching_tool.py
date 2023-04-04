@@ -6,7 +6,7 @@ This file contains the query building class which helps users access data api.
 """
 
 DEV_QUERY = "http://127.0.0.1:5000/api/v1/sportscards/search?"
-BASE_QUERY = "http://flask-cards-env.eba-gsyr32jx.us-east-2.elasticbeanstalk.com/api/v1/sportscards/search?"
+BASE_QUERY = "https://travisapi.pythonanywhere.com/api/v1/sportscards/search?"
 
 
 class query_builder:
