@@ -13,7 +13,7 @@ from SportsCardTool.bref_tool import remove_accents
 """
 This file contains the main scraping tool and helper functions.
 """
-file_path = os.path.join(os.path.dirname(__file__), 'data\\bref_data.json')
+file_path = os.path.join(os.path.dirname(__file__), 'data/bref_data.json')
 
 # Load in dictionary of debut and bref info
 with open(file_path) as json_file:
