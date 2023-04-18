@@ -1,8 +1,7 @@
 # SportsCardTool
 
 [![Build Status](https://github.com/TravisGibbs/SportsCardTool/workflows/Build%20Status/badge.svg?branch=main)](https://github.com/TravisGibbs/SportsCardTool/actions?query=workflow%3A%22Build+Status%22)
-[![codecov](https://codecov.io/gh/TravisGibbs/SportsCardTool/branch/main/graph/badge.svg)](https://codecov.io/gh/TravisGibbs/SportsCardTool)
-[![PyPI](https://img.shields.io/pypi/v/SportsCardTool)](https://pypi.org/project/SportsCardTool/)
+[![codecov](https://codecov.io/gh/TravisGibbs/SportsCardToolLib/branch/main/graph/badge.svg?token=D45VY693WQ)](https://codecov.io/gh/TravisGibbs/SportsCardToolLib)[![PyPI](https://img.shields.io/pypi/v/SportsCardTool)](https://pypi.org/project/SportsCardTool/)
 
 <img src="https://img.shields.io/badge/license-Apache--2.0-green"/>
 <img src="https://img.shields.io/github/issues/travisgibbs/SportsCardTool?style=plastic"/>
@@ -11,7 +10,7 @@ SportsCardTool is designed to gather card data and track collections of cards. W
 
 Currently SportsCardTool provides the ability to gather all baseball card setlists and to search prescraped data via data API and Querybuilder tool.
 
-Potential contributors should check out [SportsCardToolServer](https://github.com/TravisGibbs/SportsCardToolServer).
+Potential contributors should check out [SportsCardToolServer](https://github.com/TravisGibbs/SportsCardToolServer) and soon to launch [SportsCardToolApp](https://github.com/TravisGibbs/SportsCardToolApp).
 
 ## Install it from PyPI
 
