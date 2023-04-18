@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 
 client_id = "d04108c95afbb8d"
 
-class EbayTool: 
+
+class EbayTool:
     def __init__(self, imgur_secret: str = None) -> None:
         self.imgur_secret = imgur_secret
 
@@ -25,11 +26,12 @@ class EbayTool:
             client = ImgurClient(client_id, self.imgur_secret)
             return client.upload_from_url(href)["link"]
         except Exception as e:
-            print("Upload to imgur failed, this is likely due to class being intialized without imgur_secret", e)
-        
-        return None
-        
+            print(
+                "Upload to imgur failed, this is likely due to class being intialized without imgur_secret",
+                e,
+            )
 
+        return None
 
     def parse_ebay_listing(self, href: str) -> str:
         """Gathers primary image from ebay listing
@@ -45,11 +47,11 @@ class EbayTool:
 
         """
         soup = BeautifulSoup(requests.get(href).content, "lxml")
-        for link in soup.find("div", class_="ux-image-carousel-item active image").find_all(
-            "img"
-        ):
+        for link in soup.find(
+            "div", class_="ux-image-carousel-item active image"
+        ).find_all("img"):
             src = link.get("src")
             if src:
                 return src
-            
+
         return None

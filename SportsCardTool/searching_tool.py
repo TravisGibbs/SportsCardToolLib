@@ -83,11 +83,14 @@ class query_builder:
             r = requests.get(q)
 
             data = json.loads(r.content)
-            results.extend(data['cards'])
-            total_results += len(data['cards'])
+            results.extend(data["cards"])
+            total_results += len(data["cards"])
 
             # If this is the last page we break
-            if data['total_results'] < data["entries_per_page"] or total_results >= min_results:
+            if (
+                data["total_results"] < data["entries_per_page"]
+                or total_results >= min_results
+            ):
                 break
 
             page += 1
