@@ -17,7 +17,8 @@ requires-python = ">=3.7"
 dependencies = [
     "bs4",
     "tqdm",
-    "lxml"
+    "lxml",
+    "imgurpython"
 ]
 
 classifiers = [
