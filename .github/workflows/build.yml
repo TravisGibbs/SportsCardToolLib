@@ -45,6 +45,8 @@ jobs:
       run: |
         make checks
     - name: Test
+      env:
+            IMGUR_SECRET: ${{ secrets.IMGUR_SECRET }}
       run: |
         make coverage
     - name: Upload test results
