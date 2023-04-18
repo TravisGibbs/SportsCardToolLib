@@ -51,5 +51,3 @@ class EbayTool:
             src = link.get("src")
             if src:
                 return src
-
-        return None

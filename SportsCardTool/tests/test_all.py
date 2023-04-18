@@ -148,3 +148,8 @@ def test_imgur_upload():
     assert ET.imgur_secret
     href = ET.imgur_upload("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sheba1.JPG/800px-Sheba1.JPG")
     assert href
+
+def test_imgur_fail():
+    ET = EbayTool("Not A Key")
+    href = ET.imgur_upload("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sheba1.JPG/800px-Sheba1.JPG")
+    assert not href
