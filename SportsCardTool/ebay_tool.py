@@ -22,16 +22,8 @@ class EbayTool:
             A new href string to an imgur image that has duplicated the source passed to it.
 
         """
-        try:
-            client = ImgurClient(client_id, self.imgur_secret)
-            return client.upload_from_url(href)["link"]
-        except Exception as e:
-            print(
-                "Upload to imgur failed, this is likely due to class being intialized without imgur_secret",
-                e,
-            )
-
-        return None
+        client = ImgurClient(client_id, self.imgur_secret)
+        return client.upload_from_url(href)["link"]
 
     def parse_ebay_listing(self, href: str) -> str:
         """Gathers primary image from ebay listing
