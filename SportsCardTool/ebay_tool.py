@@ -47,9 +47,7 @@ class EbayTool:
 
         """
         soup = BeautifulSoup(requests.get(href).content, "lxml")
-        for link in soup.find(
-            "div", class_="ux-image-carousel-item active image"
-        ).find_all("img"):
+        for link in soup.find("div", class_="ux-image-carousel-item active image").find_all("img"):
             src = link.get("src")
             if src:
                 return src
