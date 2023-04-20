@@ -110,6 +110,7 @@ def test_dump_data_csv():
     results = pd.read_csv("demo_cards.csv")
     assert len(results) == 2
 
+
 def test_dump_data_json():
     mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
     dump_data_json(mock_data)

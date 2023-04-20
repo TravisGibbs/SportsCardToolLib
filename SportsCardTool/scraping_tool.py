@@ -256,7 +256,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
                 card["debut_year"] = card_bref["debut_year"] == year
             if card_bref["last_year"]:
                 card["post_career"] = int(card_bref["last_year"]) < int(year[:4])
-            card['names'].append(pos_name)
+            card["names"].append(pos_name)
 
     if card["team"] and len(card["short_names"]) == 0 and len(card["names"]) > 0:
         team_words = card["team"].split(" ")
@@ -378,5 +378,5 @@ def dump_data_json(card_list: List[Dict], json_name: str = "demo_cards.json"):
         json_name: A name/path for output file defaults to demo_cards.json
 
     """
-    with open(json_name, 'w') as output_file:
+    with open(json_name, "w") as output_file:
         json.dump(card_list, output_file)
