@@ -29,9 +29,9 @@ def test_grab_bref_info():
     assert name == "ted williams"
     bref_info, name = grab_bref_info("hank aaron")
     assert bref_info["short_name"] == "aaronha01"
-    bref_info, name = grab_bref_info("ken griffey jr.")
+    bref_info, name = grab_bref_info("ken griffey jr. CONFOUNDING TEXT")
     assert bref_info["short_name"] == "griffke02"
-    bref_info, name = grab_bref_info("eric young sr.")
+    bref_info, name = grab_bref_info("eric young sr. CONFOUNDING TEXT")
     assert bref_info["short_name"] == "younger01"
 
 
