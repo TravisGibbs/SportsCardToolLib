@@ -22,10 +22,11 @@ import json
 
 
 def test_grab_bref_info():
-    bref_info = grab_bref_info("ted williams")
+    bref_info, name = grab_bref_info("ted williams")
     assert bref_info["short_name"] == "willite01"
     assert bref_info["debut_year"] == "1939"
     assert bref_info["last_year"] == "1960"
+    assert name == "ted williams"
 
 
 def test_grab_debut_year():
@@ -114,8 +115,9 @@ def test_dump_data_csv():
 def test_dump_data_json():
     mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
     dump_data_json(mock_data)
-    results = json.load("demo_cards.json")
-    assert len(results) == 2
+    with open("./demo_cards.json") as file:
+        results = json.load(file)
+        assert len(results) == 2
 
 
 def test_get_soup():
