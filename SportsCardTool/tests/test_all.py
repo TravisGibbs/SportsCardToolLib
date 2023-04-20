@@ -1,6 +1,7 @@
 from SportsCardTool import (
     grab_card_list,
-    dump_data,
+    dump_data_csv,
+    dump_data_json,
     get_soup,
     filter_hrefs,
     grab_year_links,
@@ -10,12 +11,14 @@ from SportsCardTool import (
     grab_debut_dict,
     remove_accents,
     grab_debut_year,
+    check_remove_terms,
     grab_bref_info,
     EbayTool,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
 from os import environ
+import json
 
 
 def test_grab_bref_info():
@@ -101,10 +104,16 @@ def test_grab_data():
     assert type(card_list[0]) == type(dict())
 
 
-def test_dump_date():
+def test_dump_data_csv():
     mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
-    dump_data(mock_data)
+    dump_data_csv(mock_data)
     results = pd.read_csv("demo_cards.csv")
+    assert len(results) == 2
+
+def test_dump_data_json():
+    mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
+    dump_data_json(mock_data)
+    results = json.load("demo_cards.json")
     assert len(results) == 2
 
 
@@ -129,7 +138,7 @@ def test_filter_href():
 def test_integration_grab_and_dump():
     card_list = grab_card_list(grab_year_links(["1950"]))
     expected_length = len(card_list)
-    dump_data(card_list)
+    dump_data_csv(card_list)
     results = pd.read_csv("demo_cards.csv")
     assert len(results) == expected_length
 
