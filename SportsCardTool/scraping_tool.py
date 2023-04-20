@@ -19,6 +19,21 @@ file_path = os.path.join(os.path.dirname(__file__), "data/bref_data.json")
 with open(file_path) as json_file:
     bref_info = json.load(json_file)
 
+MANAGER_TERMS = ["MG", "CO", "Coach", "Manager"]
+ERROR_TERMS = [
+    "ERR: No Copyright",
+    "UER",
+    "ERR",
+    "COR",
+]
+UMPIRE_TERMS = ["UMP", "Umpire"]
+LEADERS_TERMS = ["Leaders", "LL"]
+CHECKLIST_TERMS = ["Checklist"]
+ALL_STAR_TERMS = ["AS", "All Stars", "All Star", "All-Stars", "All-Star"]
+ROOKIE_TERMS = ["Rookie Stars", "Rookies", "Rookie", "RS"]
+POSITION_TERMS = ["RP", "CL"]
+PARALLEL_TERMS = ["Grey Backs", "White Backs", "/66", "/POR"]
+
 
 def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
     """Filters tag objects according to filter and returns matching href strings.
@@ -50,23 +65,30 @@ def grab_bref_info(name: str) -> Dict:
 
     Returns:
         A dict containing bref_info for the given player or
-        a placeholder dictionary.
+        a placeholder dictionary and a corrected name string when possible!
 
     """
     card_bref = {"short_name": None, "debut_year": None, "last_year": None}
+    return_name = name
 
     if name in bref_info["players"]:
         card_bref = bref_info["players"][name]
     elif name.split(" jr.")[0] in bref_info["players"]:
         card_bref = bref_info["players"][name.split(" jr.")[0]]
+        return_name = name.split(" jr.")[0] + " jr."
     elif name.split(" sr.")[0] in bref_info["players"]:
         card_bref = bref_info["players"][name.split(" sr.")[0]]
+        return_name = name.split(" sr.")[0] + " sr."
     elif " ".join(name.split(" ")[0:2]) in bref_info["players"]:
         card_bref = bref_info["players"][" ".join(name.split(" ")[0:2])]
+        return_name = " ".join(name.split(" ")[0:2])
     elif " ".join(name.split(" ")[0:3]) in bref_info["players"]:
         card_bref = bref_info["players"][" ".join(name.split(" ")[0:3])]
+        return_name = " ".join(name.split(" ")[0:3])
+    elif " ".join(name.split(" ")[0:2]) == "hank aaron":
+        card_bref = bref_info["players"]["henry aaron"]
 
-    return card_bref
+    return card_bref, return_name
 
 
 def get_soup(href: str) -> BeautifulSoup:
@@ -120,6 +142,31 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     return year_links
 
 
+def check_remove_terms(name: str, terms: List[str]) -> Tuple[str, bool, bool]:
+    """Takes in a string checks for terms in a list and removes them if possible.
+
+    This is used to help parse listing, gaining data about the listing itself and
+    trimming unessecary or confounding information.
+
+    Args:
+    name: A string representing the name of the card.
+    terms: List of case sensitive terms to remove in the card
+
+    Returns:
+    A tuple containing the modified name, a bool indication of if a term was detected,
+    and the term detected in the word.
+    """
+    for term in terms:
+        if term in name:
+            if name == term:
+                return name.strip(), True, term
+            else:
+                name = name.replace(term, "")
+                return name.strip(), True, term
+
+    return (name, False, False)
+
+
 def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     """Takes in a panel and other gathered info and creates a card dict to be returned.
 
@@ -138,6 +185,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
         several types of cards (team cards, multi player, checklist).
     """
     card = {"year": year, "group": group, "set": set}
+    card["set_alt"] = None
     card["serial"] = 0
     card["auto"] = False
     card["mem"] = False
@@ -150,33 +198,20 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card["debut_year"] = None
     card["pre_major"] = None
     card["post_career"] = None
-    card["short_name"] = None
+    card["short_names"] = []
+    card["manager"] = False
+    card["umpire"] = False
+    card["team_card"] = False
+    card["error"] = False
+    card["checklist"] = False
+    card["leaders"] = False
+    card["all_star"] = False
+    card["parallel"] = False
+    card["names"] = []
     card_bref = None
 
-    card["listing"] = panel.find("h5").text.strip()
-    name_number = card["listing"].split("#")[1]
-
-    card["number"] = name_number.split(" ")[0]
-    card["name"] = remove_accents(" ".join(name_number.split(" ")[1:]))
-
-    card_bref = grab_bref_info(card["name"].lower())
-
-    card["short_name"] = card_bref["short_name"]
-    if card_bref["debut_year"]:
-        card["pre_major"] = int(card_bref["debut_year"]) > int(year)
-        card["debut_year"] = card_bref["debut_year"] == year
-    if card_bref["last_year"]:
-        card["post_career"] = int(card_bref["last_year"]) < int(year)
-
-    for i, img in enumerate(panel.find_all(class_="img-fluid")):
-        if i == 0:
-            card["front_img"] = img["src"]
-        else:
-            card["back_img"] = img["src"]
     # Panel Area -> team, relic, auto, rc, serial
     badge_panel = panel.find_all("div", class_="border-muted border-bottom mb-3 pb-1")
-
-    card["team"] = str(badge_panel[0]).split(">")[1].split("<")[0].strip()
 
     for badge in badge_panel[0].find_all("div", class_="badge"):
         txt = badge.text
@@ -188,6 +223,51 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
             card["mem"] = True
         else:
             card["rc"] = True
+
+    card["team"] = str(badge_panel[0]).split(">")[1].split("<")[0].strip()
+    card["listing"] = panel.find("h5").text.strip()
+    card["set_alt"], name_number = card["listing"].split("#")[:2]
+
+    card["number"] = name_number.split(" ")[0]
+    possible_name = remove_accents(" ".join(name_number.split(" ")[1:])).strip()
+
+    if "Checklist" in possible_name:
+        card["checklist"] = True
+        possible_name.replace("Checklist/", "")
+
+    possible_name, card["umpire"], _ = check_remove_terms(possible_name, UMPIRE_TERMS)
+    possible_name, card["manager"], _ = check_remove_terms(possible_name, MANAGER_TERMS)
+    possible_name, card["error"], _ = check_remove_terms(possible_name, ERROR_TERMS)
+    possible_name, card["leaders"], _ = check_remove_terms(possible_name, LEADERS_TERMS)
+    possible_name, card["all_star"], _ = check_remove_terms(possible_name, ALL_STAR_TERMS)
+    possible_name, card["rc"], _ = check_remove_terms(possible_name, ROOKIE_TERMS)
+    possible_name, _, _ = check_remove_terms(possible_name, POSITION_TERMS)
+    possible_name, _, card["parallel"] = check_remove_terms(possible_name, PARALLEL_TERMS)
+
+    possible_names = possible_name.split("/")
+    for pos_name in possible_names:
+        pos_name = pos_name.strip()
+        if len(pos_name) > 2:
+            card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
+            if card_bref["short_name"]:
+                card["short_names"].append(card_bref["short_name"])
+            if card_bref["debut_year"]:
+                card["pre_major"] = int(card_bref["debut_year"]) > int(year[:4])
+                card["debut_year"] = card_bref["debut_year"] == year
+            if card_bref["last_year"]:
+                card["post_career"] = int(card_bref["last_year"]) < int(year[:4])
+            card['names'].append(pos_name)
+
+    if card["team"] and len(card["short_names"]) == 0 and len(card["names"]) > 0:
+        team_words = card["team"].split(" ")
+        if card["names"][0] == card["team"].lower() or any(word in possible_names for word in team_words):
+            card["team_card"] = True
+
+    for i, img in enumerate(panel.find_all(class_="img-fluid")):
+        if i == 0:
+            card["front_img"] = img["src"]
+        else:
+            card["back_img"] = img["src"]
 
     return card
 
@@ -257,6 +337,7 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
     """
     card_list = []
     # Main parsing loop
+
     for year_link in year_links:
         year = str(year_link).split("year-")[1].split("/")[0]
         print("Finding cards for", year, "hold on this might take a while!")
@@ -275,7 +356,7 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
     return card_list
 
 
-def dump_data(card_list: List[Dict], csv_name: str = "demo_cards.csv"):
+def dump_data_csv(card_list: List[Dict], csv_name: str = "demo_cards.csv"):
     """Takes a list of dictionaries and creates a new csv file containing them
 
     Args:
@@ -287,3 +368,15 @@ def dump_data(card_list: List[Dict], csv_name: str = "demo_cards.csv"):
         dict_writer = csv.DictWriter(output_file, card_list[0].keys())
         dict_writer.writeheader()
         dict_writer.writerows(card_list)
+
+
+def dump_data_json(card_list: List[Dict], json_name: str = "demo_cards.json"):
+    """Takes a list of dictionaries and creates a new json file containing them
+
+    Args:
+        card_list: A list of dictionaries representing cards.
+        json_name: A name/path for output file defaults to demo_cards.json
+
+    """
+    with open(json_name, 'w') as output_file:
+        json.dump(card_list, output_file)
