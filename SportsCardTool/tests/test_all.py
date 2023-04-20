@@ -27,6 +27,16 @@ def test_grab_bref_info():
     assert bref_info["debut_year"] == "1939"
     assert bref_info["last_year"] == "1960"
     assert name == "ted williams"
+    bref_info, name = grab_bref_info("hank aaron")
+    assert bref_info["short_name"] == "aaronha01"
+    bref_info, name = grab_bref_info("ken griffey jr.")
+    assert bref_info["short_name"] == "griffke02"
+    bref_info, name = grab_bref_info("eric young sr.")
+    assert bref_info["short_name"] == "younger01"
+
+def test_check_remove_terms():
+    name, _, _, = check_remove_terms("term", ["term"])
+    assert name == "term"
 
 
 def test_grab_debut_year():
