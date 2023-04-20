@@ -34,8 +34,13 @@ def test_grab_bref_info():
     bref_info, name = grab_bref_info("eric young sr.")
     assert bref_info["short_name"] == "younger01"
 
+
 def test_check_remove_terms():
-    name, _, _, = check_remove_terms("term", ["term"])
+    (
+        name,
+        _,
+        _,
+    ) = check_remove_terms("term", ["term"])
     assert name == "term"
 
 
