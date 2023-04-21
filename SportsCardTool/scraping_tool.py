@@ -48,13 +48,13 @@ def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
         A list of strings, each one an href that contains the filter
 
     """
-    hrefs = []
+    hrefs = set()
     for link in links:
         href = link.get("href")
         if href:
             if filter in href:
-                hrefs.append(href)
-    return hrefs
+                hrefs.add(href)
+    return list(hrefs)
 
 
 def grab_bref_info(name: str) -> Dict:
