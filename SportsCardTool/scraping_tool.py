@@ -73,6 +73,9 @@ def grab_bref_info(name: str) -> Dict:
 
     if name in bref_info["players"]:
         card_bref = bref_info["players"][name]
+    elif " ".join(name.split(" ")[0:3]) in bref_info["players"]:
+        card_bref = bref_info["players"][" ".join(name.split(" ")[0:3])]
+        return_name = " ".join(name.split(" ")[0:3])
     elif name.split(" jr.")[0] in bref_info["players"]:
         card_bref = bref_info["players"][name.split(" jr.")[0]]
         return_name = name.split(" jr.")[0] + " jr."
@@ -82,9 +85,6 @@ def grab_bref_info(name: str) -> Dict:
     elif " ".join(name.split(" ")[0:2]) in bref_info["players"]:
         card_bref = bref_info["players"][" ".join(name.split(" ")[0:2])]
         return_name = " ".join(name.split(" ")[0:2])
-    elif " ".join(name.split(" ")[0:3]) in bref_info["players"]:
-        card_bref = bref_info["players"][" ".join(name.split(" ")[0:3])]
-        return_name = " ".join(name.split(" ")[0:3])
     elif " ".join(name.split(" ")[0:2]) == "hank aaron":
         card_bref = bref_info["players"]["henry aaron"]
 
