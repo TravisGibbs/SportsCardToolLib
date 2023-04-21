@@ -1,6 +1,7 @@
 from SportsCardTool import (
     grab_card_list,
-    dump_data,
+    dump_data_csv,
+    dump_data_json,
     get_soup,
     filter_hrefs,
     grab_year_links,
@@ -10,19 +11,37 @@ from SportsCardTool import (
     grab_debut_dict,
     remove_accents,
     grab_debut_year,
+    check_remove_terms,
     grab_bref_info,
     EbayTool,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
 from os import environ
+import json
 
 
 def test_grab_bref_info():
-    bref_info = grab_bref_info("ted williams")
+    bref_info, name = grab_bref_info("ted williams")
     assert bref_info["short_name"] == "willite01"
     assert bref_info["debut_year"] == "1939"
     assert bref_info["last_year"] == "1960"
+    assert name == "ted williams"
+    bref_info, name = grab_bref_info("hank aaron")
+    assert bref_info["short_name"] == "aaronha01"
+    bref_info, name = grab_bref_info("ken griffey jr. CONFOUNDING TEXT")
+    assert bref_info["short_name"] == "griffke02"
+    bref_info, name = grab_bref_info("eric young sr. CONFOUNDING TEXT")
+    assert bref_info["short_name"] == "younger01"
+
+
+def test_check_remove_terms():
+    (
+        name,
+        _,
+        _,
+    ) = check_remove_terms("term", ["term"])
+    assert name == "term"
 
 
 def test_grab_debut_year():
@@ -101,11 +120,19 @@ def test_grab_data():
     assert type(card_list[0]) == type(dict())
 
 
-def test_dump_date():
+def test_dump_data_csv():
     mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
-    dump_data(mock_data)
+    dump_data_csv(mock_data)
     results = pd.read_csv("demo_cards.csv")
     assert len(results) == 2
+
+
+def test_dump_data_json():
+    mock_data = [{"a": "a", "b": "b"}, {"a": "b", "b": "a"}]
+    dump_data_json(mock_data)
+    with open("./demo_cards.json") as file:
+        results = json.load(file)
+        assert len(results) == 2
 
 
 def test_get_soup():
@@ -129,7 +156,7 @@ def test_filter_href():
 def test_integration_grab_and_dump():
     card_list = grab_card_list(grab_year_links(["1950"]))
     expected_length = len(card_list)
-    dump_data(card_list)
+    dump_data_csv(card_list)
     results = pd.read_csv("demo_cards.csv")
     assert len(results) == expected_length
 
