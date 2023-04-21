@@ -58,7 +58,7 @@ class query_builder:
 
             self.terms += 1
 
-    def grab_data(self, min_results: int = 1000):
+    def grab_data(self, min_results: int = 20):
         """Executes query as defined by class atribute.
 
         Pages through results produced by query string untill
