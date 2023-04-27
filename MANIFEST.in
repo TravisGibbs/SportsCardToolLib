@@ -22,6 +22,7 @@ recursive-include docs *.png
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs *.txt
+recursive-include docs *.nojekyll
 
 prune .github
 exclude .gitignore
