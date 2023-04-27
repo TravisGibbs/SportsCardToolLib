@@ -6,7 +6,7 @@ This file contains the query building class which helps users access data api.
 """
 
 DEV_QUERY = "http://127.0.0.1:5000/api/v1/sportscards/search?"
-BASE_QUERY = "http://flask-cards-env.eba-gsyr32jx.us-east-2.elasticbeanstalk.com/api/v1/sportscards/search?"
+BASE_QUERY = "https://travisapi.pythonanywhere.com/api/v1/sportscards/search?"
 
 
 class query_builder:
@@ -58,7 +58,7 @@ class query_builder:
 
             self.terms += 1
 
-    def grab_data(self, min_results: int = 1000):
+    def grab_data(self, min_results: int = 20):
         """Executes query as defined by class atribute.
 
         Pages through results produced by query string untill
@@ -83,11 +83,11 @@ class query_builder:
             r = requests.get(q)
 
             data = json.loads(r.content)
-            results.extend(data['cards'])
-            total_results += len(data['cards'])
+            results.extend(data["cards"])
+            total_results += len(data["cards"])
 
             # If this is the last page we break
-            if data['total_results'] < data["entries_per_page"] or total_results >= min_results:
+            if data["total_results"] < data["entries_per_page"] or total_results >= min_results:
                 break
 
             page += 1
