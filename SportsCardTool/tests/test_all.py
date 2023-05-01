@@ -14,15 +14,14 @@ from SportsCardTool import (
     check_remove_terms,
     grab_bref_info,
     EbayTool,
-    statcast_batter_player_stats, 
-    statcast_clean_column_names, 
-    statcast_pitcher_page_stats
+    statcast_batter_player_stats,
+    statcast_clean_column_names,
+    statcast_pitcher_page_stats,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
 from os import environ
 import json
-
 
 
 def test_grab_bref_info():
@@ -101,7 +100,9 @@ def test_grab_year_links():
 
 def test_process_set_links():
     cards = process_set_links(
-        ["https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"],
+        [
+            "https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"
+        ],
         "1990",
     )
     assert len(cards) > 40
@@ -144,7 +145,9 @@ def test_get_soup():
         "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
     )
     mock_soup_failure = get_soup("notalink")
-    assert type(mock_soup_success) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', "lxml"))
+    assert type(mock_soup_success) == type(
+        BeautifulSoup('<b class="boldest">Extremely bold</b>', "lxml")
+    )
     assert len(mock_soup_failure.find_all("a")) == 0
 
 
@@ -175,8 +178,11 @@ def test_ebay_image_capture():
 
 def test_imgur_upload():
     ET = EbayTool(environ["IMGUR_SECRET"])
-    href = ET.imgur_upload("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sheba1.JPG/800px-Sheba1.JPG")
+    href = ET.imgur_upload(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sheba1.JPG/800px-Sheba1.JPG"
+    )
     assert href
+
 
 def test_statcast_batter_page_stats() -> None:
     result: dict[str, pd.DataFrame] = statcast_batter_player_stats(642715)
@@ -198,7 +204,14 @@ def test_statcast_pitcher_page_stats() -> None:
 
     assert len(stat_df) > 5
 
+
 def test_statcast_clean_column_names() -> None:
-    assert statcast_clean_column_names(("Unnamed: 0_level_0", "Total Movement (In.)")) == "Total Movement (In.)"
-    assert statcast_clean_column_names(("Runners On Base", "Total Movement (In.)")) == "Runners On Base Total Movement (In.)"
+    assert (
+        statcast_clean_column_names(("Unnamed: 0_level_0", "Total Movement (In.)"))
+        == "Total Movement (In.)"
+    )
+    assert (
+        statcast_clean_column_names(("Runners On Base", "Total Movement (In.)"))
+        == "Runners On Base Total Movement (In.)"
+    )
     assert statcast_clean_column_names("Total Movement (In.)") == "Total Movement (In.)"

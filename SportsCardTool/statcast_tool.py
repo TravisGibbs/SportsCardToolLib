@@ -1,5 +1,3 @@
-
-
 from typing import Optional
 
 import pandas as pd
@@ -333,7 +331,7 @@ def statcast_batter_player_stats(
     """
     Retrieves tables from individual batters page on Baseball Savant with options to select table of interest.
     ARGUMENTS
-        player_id : INT : the player's MLBAM ID. Find this by calling pybaseball.playerid_lookup(last_name, first_name), 
+        player_id : INT : the player's MLBAM ID. Find this by calling pybaseball.playerid_lookup(last_name, first_name),
             finding the correct player, and selecting their key_mlbam.
         table_names : A list of strings containing the names of the tables to be extracted from the player's savant,
             alternatively left blank and all named tables will be gathered
@@ -354,14 +352,11 @@ def statcast_batter_player_stats(
     return dfs
 
 
-
-def statcast_pitcher_page_stats(
-    player_id: str, tables_names: Optional[list] = ["ALL"]
-):
+def statcast_pitcher_page_stats(player_id: str, tables_names: Optional[list] = ["ALL"]):
     """
     Retrieves tables from individual batters page on Baseball Savant with options to select table of interest.
     ARGUMENTS
-        player_id : INT : the player's MLBAM ID. Find this by calling pybaseball.playerid_lookup(last_name, first_name), 
+        player_id : INT : the player's MLBAM ID. Find this by calling pybaseball.playerid_lookup(last_name, first_name),
             finding the correct player, and selecting their key_mlbam.
         table_names : A list of strings containing the names of the tables to be extracted from the player's savant,
             alternatively left blank and all named tables will be gathered
