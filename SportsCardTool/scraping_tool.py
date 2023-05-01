@@ -239,14 +239,10 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     possible_name, card["manager"], _ = check_remove_terms(possible_name, MANAGER_TERMS)
     possible_name, card["error"], _ = check_remove_terms(possible_name, ERROR_TERMS)
     possible_name, card["leaders"], _ = check_remove_terms(possible_name, LEADERS_TERMS)
-    possible_name, card["all_star"], _ = check_remove_terms(
-        possible_name, ALL_STAR_TERMS
-    )
+    possible_name, card["all_star"], _ = check_remove_terms(possible_name, ALL_STAR_TERMS)
     possible_name, card["rc"], _ = check_remove_terms(possible_name, ROOKIE_TERMS)
     possible_name, _, _ = check_remove_terms(possible_name, POSITION_TERMS)
-    possible_name, _, card["parallel"] = check_remove_terms(
-        possible_name, PARALLEL_TERMS
-    )
+    possible_name, _, card["parallel"] = check_remove_terms(possible_name, PARALLEL_TERMS)
 
     possible_names = possible_name.split("/")
     for pos_name in possible_names:
@@ -264,9 +260,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
 
     if card["team"] and len(card["short_names"]) == 0 and len(card["names"]) > 0:
         team_words = card["team"].split(" ")
-        if card["names"][0] == card["team"].lower() or any(
-            word in possible_names for word in team_words
-        ):
+        if card["names"][0] == card["team"].lower() or any(word in possible_names for word in team_words):
             card["team_card"] = True
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
