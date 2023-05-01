@@ -1,4 +1,3 @@
-from imgurpython import ImgurClient
 import requests
 from bs4 import BeautifulSoup
 
@@ -8,22 +7,6 @@ client_id = "d04108c95afbb8d"
 class EbayTool:
     def __init__(self, imgur_secret: str = None) -> None:
         self.imgur_secret = imgur_secret
-
-    def imgur_upload(self, href: str) -> str:
-        """Duplicates an image to imgur.
-
-           This allows for non permanant image links to be duplicated from ebay
-           to a more permanant source.
-
-        Args:
-            href: A link to an image resource.
-
-        Returns:
-            A new href string to an imgur image that has duplicated the source passed to it.
-
-        """
-        client = ImgurClient(client_id, self.imgur_secret)
-        return client.upload_from_url(href)["link"]
 
     def parse_ebay_listing(self, href: str) -> str:
         """Gathers primary image from ebay listing

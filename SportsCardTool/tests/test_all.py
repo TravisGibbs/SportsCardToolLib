@@ -20,7 +20,6 @@ from SportsCardTool import (
 )
 from bs4 import BeautifulSoup
 import pandas as pd
-from os import environ
 import json
 
 
@@ -169,12 +168,6 @@ def test_ebay_image_capture():
     href = ET.parse_ebay_listing(
         "https://www.ebay.com/itm/144732185425?_trkparms=amclksrc%3DITM%26aid%3D777008%26algo%3DPERSONAL.TOPIC%26ao%3D1%26asc%3D20220705100511%26meid%3Dbd9c2ebabd08470cb87f50fa3cfa3759%26pid%3D101524%26rk%3D1%26rkt%3D1%26itm%3D144732185425%26pmt%3D0%26noa%3D1%26pg%3D2380057%26algv%3DRecentlyViewedItemsV2&_trksid=p2380057.c101524.m146925&_trkparms=pageci%3A7921ce0a-de28-11ed-a017-9e22be3a317f%7Cparentrq%3A9613cda81870ac0fbd638439ffff78f6%7Ciid%3A1"
     )
-    assert href
-
-
-def test_imgur_upload():
-    ET = EbayTool(environ["IMGUR_SECRET"])
-    href = ET.imgur_upload("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sheba1.JPG/800px-Sheba1.JPG")
     assert href
 
 
