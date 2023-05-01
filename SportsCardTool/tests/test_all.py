@@ -14,10 +14,12 @@ from SportsCardTool import (
     check_remove_terms,
     grab_bref_info,
     EbayTool,
+    statcast_batter_player_stats,
+    statcast_clean_column_names,
+    statcast_pitcher_page_stats,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
-from os import environ
 import json
 
 
@@ -169,7 +171,31 @@ def test_ebay_image_capture():
     assert href
 
 
-def test_imgur_upload():
-    ET = EbayTool(environ["IMGUR_SECRET"])
-    href = ET.imgur_upload("https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sheba1.JPG/800px-Sheba1.JPG")
-    assert href
+def test_statcast_batter_page_stats() -> None:
+    result: dict[str, pd.DataFrame] = statcast_batter_player_stats(642715)
+    print(list(result.keys()))
+    stat_df = result["Statcast Batting Statistics"]
+
+    assert result is not None
+    assert not stat_df.empty
+
+    assert len(stat_df) > 5
+
+
+def test_statcast_pitcher_page_stats() -> None:
+    result: dict[str, pd.DataFrame] = statcast_pitcher_page_stats(605483)
+    stat_df = result["Statcast Statistics"]
+
+    assert result is not None
+    assert not stat_df.empty
+
+    assert len(stat_df) > 5
+
+
+def test_statcast_clean_column_names() -> None:
+    assert statcast_clean_column_names(("Unnamed: 0_level_0", "Total Movement (In.)")) == "Total Movement (In.)"
+    assert (
+        statcast_clean_column_names(("Runners On Base", "Total Movement (In.)"))
+        == "Runners On Base Total Movement (In.)"
+    )
+    assert statcast_clean_column_names("Total Movement (In.)") == "Total Movement (In.)"
