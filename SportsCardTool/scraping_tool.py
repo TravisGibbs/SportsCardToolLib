@@ -169,7 +169,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     possible_names = possible_name.split("/")
     for pos_name in possible_names:
         pos_name = pos_name.strip()
-        if len(pos_name) > 2:
+        if len(pos_name) > 2 and pos_name != card["team"]:
             player = {}
             card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
             player["name"] = pos_name
@@ -191,7 +191,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
                 player["short_name"] = data["key_bbref"]
                 player["key_fangraphs"] = data["key_fangraphs"]
                 bref_info["players"] = {
-                    player[pos_name]: {
+                    pos_name: {
                         "debut_year": data["mlb_played_first"],
                         "last_game": None,
                         "last_year": data["mlb_played_last"],
