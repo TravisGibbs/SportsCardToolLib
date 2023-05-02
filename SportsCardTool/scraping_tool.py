@@ -196,9 +196,6 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card["server_pop"] = 0
     card["user_upload_links"] = []
     card["debut_year"] = None
-    card["pre_major"] = None
-    card["post_career"] = None
-    card["short_names"] = []
     card["manager"] = False
     card["umpire"] = False
     card["team_card"] = False
@@ -207,7 +204,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card["leaders"] = False
     card["all_star"] = False
     card["parallel"] = False
-    card["names"] = []
+    card["players"] = []
     card_bref = None
 
     # Panel Area -> team, relic, auto, rc, serial
@@ -248,20 +245,28 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     for pos_name in possible_names:
         pos_name = pos_name.strip()
         if len(pos_name) > 2:
+            player = {}
             card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
-            if card_bref["short_name"]:
-                card["short_names"].append(card_bref["short_name"])
-            if card_bref["debut_year"]:
-                card["pre_major"] = int(card_bref["debut_year"]) > int(year[:4])
-                card["debut_year"] = card_bref["debut_year"] == year
-            if card_bref["last_year"]:
-                card["post_career"] = int(card_bref["last_year"]) < int(year[:4])
-            card["names"].append(pos_name)
 
-    if card["team"] and len(card["short_names"]) == 0 and len(card["names"]) > 0:
+            player["name"] = pos_name
+            if card_bref["short_name"]:
+                player["short_names"] = card_bref["short_name"]
+            if card_bref["debut_year"]:
+                player["debut_year"] = card_bref["debut_year"] == year
+            if card_bref["last_year"]:
+                player["last_year"] = int(card_bref["last_year"])
+
+            card["players"].append(player)
+
+    if card["team"] and len(card["players"]) == 0:
         team_words = card["team"].split(" ")
         if card["names"][0] == card["team"].lower() or any(word in possible_names for word in team_words):
             card["team_card"] = True
+
+    # If any player on card is in their first year when card is released set as rookie
+    for player in card['players']:
+        if player['debut_year'] == card["year"]:
+            card["rookie"] = True
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:
