@@ -6,7 +6,7 @@ from typing import Dict
 import json
 import os
 from SportsCardTool.bref_tool import remove_accents
-from SportsCardToolLib.SportsCardTool.util import (
+from SportsCardTool.util import (
     ALL_STAR_TERMS,
     ERROR_TERMS,
     LEADERS_TERMS,

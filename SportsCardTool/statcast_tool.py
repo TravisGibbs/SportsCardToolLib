@@ -3,7 +3,7 @@ from typing import Optional
 import pandas as pd
 import requests
 
-from SportsCardToolLib.SportsCardTool.util import (
+from SportsCardTool.util import (
     STATCAST_TABLES_BATTER,
     STATCAST_TABLES_PITCHER,
     statcast_clean_column_names,
