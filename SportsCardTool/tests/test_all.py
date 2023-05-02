@@ -17,6 +17,7 @@ from SportsCardTool import (
     statcast_batter_player_stats,
     statcast_clean_column_names,
     statcast_pitcher_page_stats,
+    find_player_ids,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -199,3 +200,10 @@ def test_statcast_clean_column_names() -> None:
         == "Runners On Base Total Movement (In.)"
     )
     assert statcast_clean_column_names("Total Movement (In.)") == "Total Movement (In.)"
+
+
+def test_find_player_ids() -> None:
+    d = find_player_ids("deverra01")
+    assert d["name_last"] == "devers"
+    assert d["name_first"] == "rafael"
+    assert d["key_mlbam"] == 646240

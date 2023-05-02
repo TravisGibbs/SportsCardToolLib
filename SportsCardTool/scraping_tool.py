@@ -1,14 +1,24 @@
-from bs4 import BeautifulSoup
-from urllib.request import Request, urlopen
 from tqdm import tqdm
 from bs4.element import Tag
 from typing import Tuple
 from typing import List
 from typing import Dict
-import csv
 import json
 import os
 from SportsCardTool.bref_tool import remove_accents
+from SportsCardTool.util import (
+    ALL_STAR_TERMS,
+    ERROR_TERMS,
+    LEADERS_TERMS,
+    MANAGER_TERMS,
+    PARALLEL_TERMS,
+    POSITION_TERMS,
+    ROOKIE_TERMS,
+    UMPIRE_TERMS,
+    check_remove_terms,
+    filter_hrefs,
+    get_soup,
+)
 
 """
 This file contains the main scraping tool and helper functions.
@@ -18,43 +28,6 @@ file_path = os.path.join(os.path.dirname(__file__), "data/bref_data.json")
 # Load in dictionary of debut and bref info
 with open(file_path) as json_file:
     bref_info = json.load(json_file)
-
-MANAGER_TERMS = ["MG", "CO", "Coach", "Manager"]
-ERROR_TERMS = [
-    "ERR: No Copyright",
-    "UER",
-    "ERR",
-    "COR",
-]
-UMPIRE_TERMS = ["UMP", "Umpire"]
-LEADERS_TERMS = ["Leaders", "LL"]
-CHECKLIST_TERMS = ["Checklist"]
-ALL_STAR_TERMS = ["AS", "All Stars", "All Star", "All-Stars", "All-Star"]
-ROOKIE_TERMS = ["Rookie Stars", "Rookies", "Rookie", "RS"]
-POSITION_TERMS = ["RP", "CL"]
-PARALLEL_TERMS = ["Grey Backs", "White Backs", "/66", "/POR"]
-
-
-def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
-    """Filters tag objects according to filter and returns matching href strings.
-
-    Returns a list of the href strings inside of each tag if they contain the filter string.
-
-    Args:
-        links: List of bs4 tag objects that may or may not have href
-        filter: String that is used to filter.
-
-    Returns:
-        A list of strings, each one an href that contains the filter
-
-    """
-    hrefs = set()
-    for link in links:
-        href = link.get("href")
-        if href:
-            if filter in href:
-                hrefs.add(href)
-    return list(hrefs)
 
 
 def grab_bref_info(name: str) -> Dict:
@@ -91,30 +64,6 @@ def grab_bref_info(name: str) -> Dict:
     return card_bref, return_name
 
 
-def get_soup(href: str) -> BeautifulSoup:
-    """Gets a BeautifulSoup object given an href string.
-
-    The BeautifulSoup object is gathered by making a request to the page and
-    parsing the response via an lxml parser. If the request fails or the parsing
-    fails an empty BeatifulSoup object will be returned.
-
-    Args:
-        href: A string containing the href of a webpage to turned to soup.
-
-    Returns:
-        A BeautifulSoup object which will contain the contents of the webpage or
-        be empty if the request or parsing fails.
-
-    """
-    try:
-        req = Request(href)
-        html_page = urlopen(req)
-        return BeautifulSoup(html_page, "lxml")
-    except Exception:
-        print("failed to capture " + href)
-        return BeautifulSoup("<HTML></HTML>", "lxml")
-
-
 def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     """Takes a list of years and finds link Tags for each year on SportsCardsChecklist.com.
 
@@ -140,31 +89,6 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     for year in year_list:
         year_links.extend(filter_hrefs(year_soup.find_all("a"), "year-" + year))
     return year_links
-
-
-def check_remove_terms(name: str, terms: List[str]) -> Tuple[str, bool, bool]:
-    """Takes in a string checks for terms in a list and removes them if possible.
-
-    This is used to help parse listing, gaining data about the listing itself and
-    trimming unessecary or confounding information.
-
-    Args:
-    name: A string representing the name of the card.
-    terms: List of case sensitive terms to remove in the card
-
-    Returns:
-    A tuple containing the modified name, a bool indication of if a term was detected,
-    and the term detected in the word.
-    """
-    for term in terms:
-        if term in name:
-            if name == term:
-                return name.strip(), True, term
-            else:
-                name = name.replace(term, "")
-                return name.strip(), True, term
-
-    return (name, False, False)
 
 
 def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
@@ -359,29 +283,3 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
         card_list.extend(process_group_links(group_links, year))
 
     return card_list
-
-
-def dump_data_csv(card_list: List[Dict], csv_name: str = "demo_cards.csv"):
-    """Takes a list of dictionaries and creates a new csv file containing them
-
-    Args:
-        card_list: A list of dictionaries representing cards.
-        csv_name: A name/path for output file defaults to demo_cards.csv
-
-    """
-    with open(csv_name, "w", newline="") as output_file:
-        dict_writer = csv.DictWriter(output_file, card_list[0].keys())
-        dict_writer.writeheader()
-        dict_writer.writerows(card_list)
-
-
-def dump_data_json(card_list: List[Dict], json_name: str = "demo_cards.json"):
-    """Takes a list of dictionaries and creates a new json file containing them
-
-    Args:
-        card_list: A list of dictionaries representing cards.
-        json_name: A name/path for output file defaults to demo_cards.json
-
-    """
-    with open(json_name, "w") as output_file:
-        json.dump(card_list, output_file)
