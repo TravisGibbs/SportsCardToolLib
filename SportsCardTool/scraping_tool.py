@@ -92,7 +92,7 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     return year_links
 
 
-def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
+def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False) -> Dict:
     """Takes in a panel and other gathered info and creates a card dict to be returned.
 
     Args:
@@ -100,6 +100,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
         year: A string representing the year the card belongs to.
         Group: A string representing the group the card belongs to
         Set: A string representing the set the card belongs to.
+        pyball_replace: A bool that if enabled, double checks names with pybaseball
 
     Returns:
         A dictionary containing all of the data that was able to extracted.
@@ -185,21 +186,19 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
             if card_bref["last_year"]:
                 player["last_year"] = int(card_bref["last_year"])
 
+            name_split = pos_name.split(" ")
+
             # If no name is detected in the json file add new entry
-            if not card_bref["short_name"]:
-                data = pyb.playerid_lookup(pos_name[len(pos_name) - 1], pos_name[0], fuzzy=True).iloc[0].to_dict()
-                if data["key_bbref"]:
+            if not card_bref["short_name"] and len(name_split) >= 2 and pybaseball_replace:
+                data = pyb.playerid_lookup(name_split[len(name_split) - 1], name_split[0], fuzzy=True).iloc[0].to_dict()
+                if data["key_bbref"] and type(data["key_bbref"]) != float:
                     player["name"] = data["name_first"] + " " + data["name_last"]
                     player["debut_year"] = data["mlb_played_first"]
                     player["last_year"] = data["mlb_played_last"]
-                    player["key_mlbam"] = data["key_mlbam"]
                     player["short_name"] = data["key_bbref"]
-                    player["key_fangraphs"] = data["key_fangraphs"]
                     bref_info["players"] = {
                         pos_name: {
-                            "debut_year": data["mlb_played_first"],
                             "last_game": None,
-                            "last_year": data["mlb_played_last"],
                             "debut": None,
                             "short_name": data["key_bbref"],
                             "href": "/players/" + data["key_bbref"][0] + "/" + data["key_bbref"] + ".shtml",
