@@ -212,7 +212,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
 
     if card["team"] and len(card["players"]) == 0:
         team_words = card["team"].split(" ")
-        if card["names"][0] == card["team"].lower() or any(word in possible_names for word in team_words):
+        if any(word in possible_names for word in team_words):
             card["team_card"] = True
 
     # If any player on card is in their first year when card is released set as rookie
