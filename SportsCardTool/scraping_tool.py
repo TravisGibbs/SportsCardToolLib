@@ -5,6 +5,7 @@ from typing import List
 from typing import Dict
 import json
 import os
+import pybaseball as pyb
 from SportsCardTool.bref_tool import remove_accents
 from SportsCardTool.util import (
     ALL_STAR_TERMS,
@@ -91,7 +92,7 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     return year_links
 
 
-def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
+def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False) -> Dict:
     """Takes in a panel and other gathered info and creates a card dict to be returned.
 
     Args:
@@ -99,6 +100,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
         year: A string representing the year the card belongs to.
         Group: A string representing the group the card belongs to
         Set: A string representing the set the card belongs to.
+        pyball_replace: A bool that if enabled, double checks names with pybaseball
 
     Returns:
         A dictionary containing all of the data that was able to extracted.
@@ -120,9 +122,6 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card["server_pop"] = 0
     card["user_upload_links"] = []
     card["debut_year"] = None
-    card["pre_major"] = None
-    card["post_career"] = None
-    card["short_names"] = []
     card["manager"] = False
     card["umpire"] = False
     card["team_card"] = False
@@ -131,7 +130,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     card["leaders"] = False
     card["all_star"] = False
     card["parallel"] = False
-    card["names"] = []
+    card["players"] = []
     card_bref = None
 
     # Panel Area -> team, relic, auto, rc, serial
@@ -171,21 +170,54 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
     possible_names = possible_name.split("/")
     for pos_name in possible_names:
         pos_name = pos_name.strip()
-        if len(pos_name) > 2:
-            card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
-            if card_bref["short_name"]:
-                card["short_names"].append(card_bref["short_name"])
-            if card_bref["debut_year"]:
-                card["pre_major"] = int(card_bref["debut_year"]) > int(year[:4])
-                card["debut_year"] = card_bref["debut_year"] == year
-            if card_bref["last_year"]:
-                card["post_career"] = int(card_bref["last_year"]) < int(year[:4])
-            card["names"].append(pos_name)
+        if len(pos_name) > 2 and pos_name != card["team"]:
+            player = {}
+            player["short_name"] = None
+            player["debut_year"] = None
+            player["last_year"] = None
+            player["name"] = pos_name
 
-    if card["team"] and len(card["short_names"]) == 0 and len(card["names"]) > 0:
+            card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
+
+            if card_bref["short_name"]:
+                player["short_name"] = card_bref["short_name"]
+            if card_bref["debut_year"]:
+                player["debut_year"] = card_bref["debut_year"] == year
+            if card_bref["last_year"]:
+                player["last_year"] = int(card_bref["last_year"])
+
+            name_split = pos_name.split(" ")
+
+            # If no name is detected in the json file add new entry
+            if not card_bref["short_name"] and len(name_split) >= 2 and pybaseball_replace:
+                data = pyb.playerid_lookup(name_split[len(name_split) - 1], name_split[0], fuzzy=True).iloc[0].to_dict()
+                if data["key_bbref"] and type(data["key_bbref"]) != float:
+                    player["name"] = data["name_first"] + " " + data["name_last"]
+                    player["debut_year"] = data["mlb_played_first"]
+                    player["last_year"] = data["mlb_played_last"]
+                    player["short_name"] = data["key_bbref"]
+                    bref_info["players"] = {
+                        pos_name: {
+                            "last_game": None,
+                            "debut": None,
+                            "short_name": data["key_bbref"],
+                            "href": "/players/" + data["key_bbref"][0] + "/" + data["key_bbref"] + ".shtml",
+                            "draft_year": None,
+                            "WAR": None,
+                        }
+                    }
+
+            card["players"].append(player)
+
+    if card["team"] and len(card["players"]) == 0:
         team_words = card["team"].split(" ")
-        if card["names"][0] == card["team"].lower() or any(word in possible_names for word in team_words):
+        if any(word in possible_names for word in team_words):
             card["team_card"] = True
+
+    # If any player on card is in their first year when card is released set as rookie
+    for player in card['players']:
+        if player['debut_year'] == card["year"]:
+            card["rookie"] = True
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
         if i == 0:
