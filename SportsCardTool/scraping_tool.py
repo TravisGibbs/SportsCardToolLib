@@ -171,8 +171,12 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
         pos_name = pos_name.strip()
         if len(pos_name) > 2 and pos_name != card["team"]:
             player = {}
-            card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
+            player["short_name"] = None
+            player["debut_year"] = None
+            player["last_year"] = None
             player["name"] = pos_name
+
+            card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
 
             if card_bref["short_name"]:
                 player["short_name"] = card_bref["short_name"]
