@@ -4,30 +4,12 @@ from time import sleep
 from typing import Dict
 from typing import List
 
+from SportsCardToolLib.SportsCardTool.util import remove_accents
+
 
 """
 This File contains tools for searching baseball reference.
 """
-
-import unicodedata
-
-
-def remove_accents(input: str) -> str:
-    """Removes accent marks and capitlization from string.
-
-    Standardizing strings makes matching between cardlists and bref possible.
-    Credit To: https://stackoverflow.com/questions/517923
-
-    Args:
-        input: A string to be modified.
-
-    Returns:
-        An output string that is lowered and removes all non standard characthers.
-
-    """
-    nfkd_form = unicodedata.normalize("NFKD", input)
-    only_ascii = nfkd_form.encode("ASCII", "ignore")
-    return only_ascii.decode()
 
 
 def grab_debut_year(year: str) -> Dict:

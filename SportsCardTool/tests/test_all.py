@@ -17,6 +17,7 @@ from SportsCardTool import (
     statcast_batter_player_stats,
     statcast_clean_column_names,
     statcast_pitcher_page_stats,
+    find_player_ids,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -99,7 +100,9 @@ def test_grab_year_links():
 
 def test_process_set_links():
     cards = process_set_links(
-        ["https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"],
+        [
+            "https://www.sportscardchecklist.com/set-138550/1990-topps-coins-baseball-card-checklist"
+        ],
         "1990",
     )
     assert len(cards) > 40
@@ -142,7 +145,9 @@ def test_get_soup():
         "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
     )
     mock_soup_failure = get_soup("notalink")
-    assert type(mock_soup_success) == type(BeautifulSoup('<b class="boldest">Extremely bold</b>', "lxml"))
+    assert type(mock_soup_success) == type(
+        BeautifulSoup('<b class="boldest">Extremely bold</b>', "lxml")
+    )
     assert len(mock_soup_failure.find_all("a")) == 0
 
 
@@ -193,9 +198,19 @@ def test_statcast_pitcher_page_stats() -> None:
 
 
 def test_statcast_clean_column_names() -> None:
-    assert statcast_clean_column_names(("Unnamed: 0_level_0", "Total Movement (In.)")) == "Total Movement (In.)"
+    assert (
+        statcast_clean_column_names(("Unnamed: 0_level_0", "Total Movement (In.)"))
+        == "Total Movement (In.)"
+    )
     assert (
         statcast_clean_column_names(("Runners On Base", "Total Movement (In.)"))
         == "Runners On Base Total Movement (In.)"
     )
     assert statcast_clean_column_names("Total Movement (In.)") == "Total Movement (In.)"
+
+
+def test_find_player_ids() -> None:
+    d = find_player_ids("deverra01")
+    assert d["name_last"] == "devers"
+    assert d["name_first"] == "rafael"
+    assert d["key_mlbam"] == 646240
