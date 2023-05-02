@@ -183,7 +183,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
 
             # If no name is detected in the json file add new entry
             if not card_bref["short_name"]:
-                data = pyb.playerid_lookup(pos_name[len(pos_name) - 1], pos_name[0], fuzzy=True).iloc(0).to_dict()
+                data = pyb.playerid_lookup(pos_name[len(pos_name) - 1], pos_name[0], fuzzy=True).iloc[0].to_dict()
                 player["name"] = data["name_first"] + " " + data["name_last"]
                 player["debut_year"] = data["mlb_played_first"]
                 player["last_year"] = data["mlb_played_last"]
