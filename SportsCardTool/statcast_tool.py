@@ -10,9 +10,7 @@ from SportsCardToolLib.SportsCardTool.util import (
 )
 
 
-def statcast_batter_player_stats(
-    player_id: str, tables_names: Optional[list] = ["ALL"]
-) -> dict[str, pd.DataFrame]:
+def statcast_batter_player_stats(player_id: str, tables_names: Optional[list] = ["ALL"]) -> dict[str, pd.DataFrame]:
     """
     Retrieves tables from individual batters page on Baseball Savant with options to select table of interest.
     ARGUMENTS
@@ -21,7 +19,9 @@ def statcast_batter_player_stats(
         table_names : A list of strings containing the names of the tables to be extracted from the player's savant,
             alternatively left blank and all named tables will be gathered
     """
-    url = f"https://baseballsavant.mlb.com/savant-player/{str(player_id)}?stats=statcast-r-hitting-mlb&playerType=batter"
+    url = (
+        f"https://baseballsavant.mlb.com/savant-player/{str(player_id)}?stats=statcast-r-hitting-mlb&playerType=batter"
+    )
     res = requests.get(url).content
     data = pd.read_html(res)
     dfs = {}
@@ -46,7 +46,9 @@ def statcast_pitcher_page_stats(player_id: str, tables_names: Optional[list] = [
         table_names : A list of strings containing the names of the tables to be extracted from the player's savant,
             alternatively left blank and all named tables will be gathered
     """
-    url = f"https://baseballsavant.mlb.com/savant-player/{str(player_id)}?stats=statcast-r-hitting-mlb&playerType=batter"
+    url = (
+        f"https://baseballsavant.mlb.com/savant-player/{str(player_id)}?stats=statcast-r-hitting-mlb&playerType=batter"
+    )
     res = requests.get(url).content
     data = pd.read_html(res)
     dfs = {}
