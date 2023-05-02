@@ -5,6 +5,7 @@ from typing import List
 from typing import Dict
 import json
 import os
+import pybaseball as pyb
 from SportsCardTool.bref_tool import remove_accents
 from SportsCardTool.util import (
     ALL_STAR_TERMS,
@@ -171,14 +172,25 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
         if len(pos_name) > 2:
             player = {}
             card_bref, pos_name = grab_bref_info(pos_name.strip().lower())
-
             player["name"] = pos_name
+
             if card_bref["short_name"]:
-                player["short_names"] = card_bref["short_name"]
+                player["short_name"] = card_bref["short_name"]
             if card_bref["debut_year"]:
                 player["debut_year"] = card_bref["debut_year"] == year
             if card_bref["last_year"]:
                 player["last_year"] = int(card_bref["last_year"])
+            
+            # If no name is detected in the json file add new entry
+            if not card_bref["short_name"]:
+                data = pyb.playerid_lookup(pos_name[len(pos_name)-1], pos_name[0], fuzzy=True).iloc(0).to_dict()
+                player["name"] = data["name_first"]+" "+data["name_last"]
+                player["debut_year"] = data["mlb_played_first"]
+                player["last_year"] = data["mlb_played_last"]
+                player["key_mlbam"] = data["key_mlbam"]
+                player["short_name"] = data["key_bbref"]
+                player["key_fangraphs"] = data["key_fangraphs"]
+                bref_info["players"] = {player[pos_name]: {"debut_year": data["mlb_played_first"], "last_game": None, "last_year": data["mlb_played_last"], "debut": None, "short_name": data["key_bbref"], "href": "/players/"+data["key_bbref"][0]+"/"+data["key_bbref"][0]+".shtml", "draft_year": None, "WAR": None}}
 
             card["players"].append(player)
 
