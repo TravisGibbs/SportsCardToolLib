@@ -184,24 +184,25 @@ def parse_panel(panel: Tag, year: str, group: str, set: str) -> Dict:
             # If no name is detected in the json file add new entry
             if not card_bref["short_name"]:
                 data = pyb.playerid_lookup(pos_name[len(pos_name) - 1], pos_name[0], fuzzy=True).iloc[0].to_dict()
-                player["name"] = data["name_first"] + " " + data["name_last"]
-                player["debut_year"] = data["mlb_played_first"]
-                player["last_year"] = data["mlb_played_last"]
-                player["key_mlbam"] = data["key_mlbam"]
-                player["short_name"] = data["key_bbref"]
-                player["key_fangraphs"] = data["key_fangraphs"]
-                bref_info["players"] = {
-                    pos_name: {
-                        "debut_year": data["mlb_played_first"],
-                        "last_game": None,
-                        "last_year": data["mlb_played_last"],
-                        "debut": None,
-                        "short_name": data["key_bbref"],
-                        "href": "/players/" + data["key_bbref"][0] + "/" + data["key_bbref"][0] + ".shtml",
-                        "draft_year": None,
-                        "WAR": None,
+                if data["key_bbref"]:
+                    player["name"] = data["name_first"] + " " + data["name_last"]
+                    player["debut_year"] = data["mlb_played_first"]
+                    player["last_year"] = data["mlb_played_last"]
+                    player["key_mlbam"] = data["key_mlbam"]
+                    player["short_name"] = data["key_bbref"]
+                    player["key_fangraphs"] = data["key_fangraphs"]
+                    bref_info["players"] = {
+                        pos_name: {
+                            "debut_year": data["mlb_played_first"],
+                            "last_game": None,
+                            "last_year": data["mlb_played_last"],
+                            "debut": None,
+                            "short_name": data["key_bbref"],
+                            "href": "/players/" + data["key_bbref"][0] + "/" + data["key_bbref"] + ".shtml",
+                            "draft_year": None,
+                            "WAR": None,
+                        }
                     }
-                }
 
             card["players"].append(player)
 
