@@ -4,7 +4,7 @@ from time import sleep
 from typing import Dict
 from typing import List
 
-from SportsCardToolLib.SportsCardTool.util import remove_accents
+from SportsCardTool.util import remove_accents
 
 
 """
