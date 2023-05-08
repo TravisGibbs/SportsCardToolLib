@@ -19,12 +19,17 @@ from SportsCardTool.util import (
     check_remove_terms,
     filter_hrefs,
     get_soup,
+    just_soup
 )
+import threading
+from requests_futures.sessions import FuturesSession
+from concurrent.futures import as_completed
 
 """
 This file contains the main scraping tool and helper functions.
 """
 file_path = os.path.join(os.path.dirname(__file__), "data/bref_data.json")
+MAX_THREADS = 500
 
 # Load in dictionary of debut and bref info
 with open(file_path) as json_file:
@@ -241,10 +246,16 @@ def process_group_links(group_links: List[str], year: str) -> List[Dict]:
 
     """
     card_list = []
-    for j in tqdm(range(len(group_links))):
-        group_href = group_links[j]
-        group = str(group_href).split("index-")[1].split("/")[0]
-        set_soup = get_soup(group_href)
+
+    session = FuturesSession()
+    futures = [session.get(link) for link in group_links]
+    res = [future for future in as_completed(futures)]
+    
+    for i in tqdm(range(len(res))):
+        r = res[i]
+        result = r.result()
+        group = str(result.url).split("index-")[1].split("/")[0].replace("-", " ")
+        set_soup = just_soup(result)
         set_links = filter_hrefs(set(set_soup.findAll("a")), "set-")
         card_list.extend(process_set_links(set_links, year, group))
     return card_list
@@ -265,16 +276,47 @@ def process_set_links(set_links: List[str], year: str, group: str = "") -> List[
         future searching.
     """
     card_list = []
-    for set_link in set_links:
-        set_ = str(set_link).split(year + "-")[1]
-        if group == "":
-            group = set_
-        player_soup = get_soup(set_link)
-        player_panels = player_soup.find_all("div", class_="panel panel-primary")
-        for player_panel in player_panels:
-            card = parse_panel(player_panel, year, group, set_)
-            card_list.append(card)
+    threads = []
+
+    session = FuturesSession()
+    futures = [session.get(link) for link in set_links]
+    res = [future for future in as_completed(futures)]
+
+    for r in res:
+        if len(threads) == MAX_THREADS:
+            t = threads.pop(0)
+            new_cards = t.join()
+            if new_cards:
+                card_list.extend()       
+
+        t = threading.Thread(target=gather_player_panels, args=[r, year, group])
+        t.start()
+        threads.append(t)
+        
+    while len(threads) > 0:
+        t = threads.pop(0)
+        new_cards = t.join()
+        if new_cards:
+            card_list.extend()     
+        
+            
     return card_list
+
+def gather_player_panels(r, year, group):
+    result = r.result()
+    set = str(result.url).split(year + "-")[1]
+    if group == "":
+        group = set
+        
+    player_soup = just_soup(result)
+    card_list = []
+    player_panels = player_soup.find_all("div", class_="panel panel-primary")
+
+    # for player_panel in player_panels:
+    #     card = parse_panel(player_panel, year, group, set)
+    #     card_list.append(card)
+
+    return player_panels
 
 
 def grab_card_list(year_links: List[str]) -> List[Dict]:
