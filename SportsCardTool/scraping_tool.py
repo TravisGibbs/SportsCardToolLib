@@ -21,15 +21,18 @@ from SportsCardTool.util import (
     get_soup,
     just_soup
 )
-import threading
 from requests_futures.sessions import FuturesSession
 from concurrent.futures import as_completed
+import itertools
+from multiprocessing.pool import ThreadPool
+
 
 """
 This file contains the main scraping tool and helper functions.
 """
 file_path = os.path.join(os.path.dirname(__file__), "data/bref_data.json")
-MAX_THREADS = 500
+MAX_THREADS = 100
+MAX_NET_THREADS = 20
 
 # Load in dictionary of debut and bref info
 with open(file_path) as json_file:
@@ -233,7 +236,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
     return card
 
 
-def process_group_links(group_links: List[str], year: str) -> List[Dict]:
+def process_group_links(group_links: List[str], year: str):
     """Proccesses group links into sets and then returns all cards in the group.
 
     Args:
@@ -245,23 +248,35 @@ def process_group_links(group_links: List[str], year: str) -> List[Dict]:
         returned will have a reference to the year, group, and set respectively.
 
     """
-    card_list = []
-
     session = FuturesSession()
     futures = [session.get(link) for link in group_links]
-    res = [future for future in as_completed(futures)]
-    
-    for i in tqdm(range(len(res))):
-        r = res[i]
-        result = r.result()
-        group = str(result.url).split("index-")[1].split("/")[0].replace("-", " ")
-        set_soup = just_soup(result)
-        set_links = filter_hrefs(set(set_soup.findAll("a")), "set-")
-        card_list.extend(process_set_links(set_links, year, group))
-    return card_list
+    res = [[future] for future in as_completed(futures)]
+    pool = ThreadPool(processes=len(res))
+    set_links =  list(itertools.chain(*pool.starmap_async(gather_set_links, res, chunksize=MAX_THREADS).get()))
+   
+    print(len(set_links))
+
+    session = FuturesSession(max_workers=MAX_NET_THREADS)
+    futures = [session.get(set_link) for set_link in set_links]
+    res = [[future.result(), year, 'group name'] for future in as_completed(futures)]
+
+    print(len(res))
+
+    pool = ThreadPool(processes=len(res))
+    result = list(itertools.chain(*pool.starmap_async(gather_player_panels, res, chunksize=MAX_THREADS).get()))
+
+    print(len(result))
+
+    return result
+
+def gather_set_links(r):
+    result = r.result()
+    set_soup = just_soup(result)
+    set_links = filter_hrefs(set(set_soup.findAll("a")), "set-")
+    return [s for s in set_links]
 
 
-def process_set_links(set_links: List[str], year: str, group: str = "") -> List[Dict]:
+def process_set_links(set_links: List[str], year: str, group: str = ""):
     """Proccesses set links and then returns all cards in the sets.
 
     Args:
@@ -275,48 +290,26 @@ def process_set_links(set_links: List[str], year: str, group: str = "") -> List[
         Note if not group is detected group is set to be equal to set to enable easy
         future searching.
     """
-    card_list = []
-    threads = []
-
-    session = FuturesSession()
+    session = FuturesSession(max_workers=MAX_NET_THREADS)
     futures = [session.get(link) for link in set_links]
-    res = [future for future in as_completed(futures)]
-
-    for r in res:
-        if len(threads) == MAX_THREADS:
-            t = threads.pop(0)
-            new_cards = t.join()
-            if new_cards:
-                card_list.extend()       
-
-        t = threading.Thread(target=gather_player_panels, args=[r, year, group])
-        t.start()
-        threads.append(t)
-        
-    while len(threads) > 0:
-        t = threads.pop(0)
-        new_cards = t.join()
-        if new_cards:
-            card_list.extend()     
-        
-            
-    return card_list
+    res = [[future.result(), year, group] for future in as_completed(futures)]
+    pool = ThreadPool(processes=len(res))
+    result = pool.starmap_async(gather_player_panels, res, chunksize=MAX_THREADS).get()
+    return list(itertools.chain(*result))
 
 def gather_player_panels(r, year, group):
-    result = r.result()
+    result = r   
     set = str(result.url).split(year + "-")[1]
     if group == "":
-        group = set
-        
+        group = set   
     player_soup = just_soup(result)
-    card_list = []
-    player_panels = player_soup.find_all("div", class_="panel panel-primary")
+    player_panels = list(player_soup.find_all("div", class_="panel panel-primary"))
+    return [[p, year, group, set, False] for p in player_panels]
 
-    # for player_panel in player_panels:
-    #     card = parse_panel(player_panel, year, group, set)
-    #     card_list.append(card)
-
-    return player_panels
+def multi_thread_panels(player_panels):
+    pool = ThreadPool(processes=len(player_panels))
+    result = pool.starmap_async(parse_panel, player_panels).get()
+    return result
 
 
 def grab_card_list(year_links: List[str]) -> List[Dict]:
@@ -345,10 +338,12 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
         set_links = filter_hrefs(groupus_soupus, "set-")
         group_links = filter_hrefs(groupus_soupus, "index-")
 
-        print("proccessing independent sets")
-        card_list.extend(process_set_links(set_links, year))
+        # set_panels = process_set_links(set_links, year)
+        # print("proccessing independent sets", len(set_panels))
+        # card_list.extend(multi_thread_panels(set_panels))
 
-        print("proccessing multi-sets")
-        card_list.extend(process_group_links(group_links, year))
+        multi_panels = process_group_links(group_links, year)
+        print("proccessing multi-sets", len(multi_panels))
+        card_list.extend(multi_thread_panels(multi_panels))
 
     return card_list
