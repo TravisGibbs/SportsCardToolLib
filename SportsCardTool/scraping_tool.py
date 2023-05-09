@@ -338,9 +338,9 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
         set_links = filter_hrefs(groupus_soupus, "set-")
         group_links = filter_hrefs(groupus_soupus, "index-")
 
-        # set_panels = process_set_links(set_links, year)
-        # print("proccessing independent sets", len(set_panels))
-        # card_list.extend(multi_thread_panels(set_panels))
+        set_panels = process_set_links(set_links, year)
+        print("proccessing independent sets", len(set_panels))
+        card_list.extend(multi_thread_panels(set_panels))
 
         multi_panels = process_group_links(group_links, year)
         print("proccessing multi-sets", len(multi_panels))
