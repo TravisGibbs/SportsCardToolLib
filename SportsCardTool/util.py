@@ -4,6 +4,9 @@ from typing import Dict, List, Tuple
 import unicodedata
 from urllib.request import urlopen, Request
 import pybaseball as pyb
+import lxml
+import cchardet
+import requests
 
 from bs4 import BeautifulSoup, Tag
 
@@ -390,9 +393,9 @@ def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
                 hrefs.add(href)
     return list(hrefs)
 
-def just_soup(response):
+def just_soup(response, strainer=None):
     try:
-        return BeautifulSoup(response.content, "lxml")
+        return BeautifulSoup(response.content, "lxml",parse_only=strainer)
     except Exception:
         print("failed to capture " + response.url)
         return BeautifulSoup("<HTML></HTML>", "lxml")
@@ -413,9 +416,7 @@ def get_soup(href) -> BeautifulSoup:
 
     """
     try:
-        req = Request(href)
-        html_page = urlopen(req)
-        return BeautifulSoup(html_page, "lxml")
+        return BeautifulSoup(requests.get(href).content, "lxml")
     except Exception:
         print("failed to capture " + href)
         return BeautifulSoup("<HTML></HTML>", "lxml")
