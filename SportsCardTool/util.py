@@ -2,10 +2,7 @@ import csv
 import json
 from typing import Dict, List, Tuple
 import unicodedata
-from urllib.request import urlopen, Request
 import pybaseball as pyb
-import lxml
-import cchardet
 import requests
 
 from bs4 import BeautifulSoup, Tag
