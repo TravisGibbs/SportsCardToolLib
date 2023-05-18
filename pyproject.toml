@@ -19,7 +19,8 @@ dependencies = [
     "tqdm",
     "lxml",
     "pybaseball",
-    "cchardet"
+    "cchardet",
+    "requests_futures"
 ]
 
 classifiers = [
