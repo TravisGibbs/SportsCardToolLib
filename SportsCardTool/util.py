@@ -393,12 +393,14 @@ def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
                 hrefs.add(href)
     return list(hrefs)
 
+
 def just_soup(response, strainer=None):
     try:
-        return BeautifulSoup(response.content, "lxml",parse_only=strainer)
+        return BeautifulSoup(response.content, "lxml", parse_only=strainer)
     except Exception:
         print("failed to capture " + response.url)
         return BeautifulSoup("<HTML></HTML>", "lxml")
+
 
 def get_soup(href) -> BeautifulSoup:
     """Gets a BeautifulSoup object given an href string.

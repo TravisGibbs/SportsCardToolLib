@@ -20,7 +20,7 @@ from SportsCardTool.util import (
     check_remove_terms,
     filter_hrefs,
     get_soup,
-    just_soup
+    just_soup,
 )
 from requests_futures.sessions import FuturesSession
 from requests.models import Response
@@ -100,7 +100,9 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     return year_links
 
 
-def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False) -> Dict:
+def parse_panel(
+    panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False
+) -> Dict:
     """Takes in a panel and other gathered info and creates a card dict to be returned.
 
     Args:
@@ -170,10 +172,14 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
     possible_name, card["manager"], _ = check_remove_terms(possible_name, MANAGER_TERMS)
     possible_name, card["error"], _ = check_remove_terms(possible_name, ERROR_TERMS)
     possible_name, card["leaders"], _ = check_remove_terms(possible_name, LEADERS_TERMS)
-    possible_name, card["all_star"], _ = check_remove_terms(possible_name, ALL_STAR_TERMS)
+    possible_name, card["all_star"], _ = check_remove_terms(
+        possible_name, ALL_STAR_TERMS
+    )
     possible_name, card["rc"], _ = check_remove_terms(possible_name, ROOKIE_TERMS)
     possible_name, _, _ = check_remove_terms(possible_name, POSITION_TERMS)
-    possible_name, _, card["parallel"] = check_remove_terms(possible_name, PARALLEL_TERMS)
+    possible_name, _, card["parallel"] = check_remove_terms(
+        possible_name, PARALLEL_TERMS
+    )
 
     possible_names = possible_name.split("/")
     for pos_name in possible_names:
@@ -197,8 +203,18 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
             name_split = pos_name.split(" ")
 
             # If no name is detected in the json file add new entry
-            if not card_bref["short_name"] and len(name_split) >= 2 and pybaseball_replace:
-                data = pyb.playerid_lookup(name_split[len(name_split) - 1], name_split[0], fuzzy=True).iloc[0].to_dict()
+            if (
+                not card_bref["short_name"]
+                and len(name_split) >= 2
+                and pybaseball_replace
+            ):
+                data = (
+                    pyb.playerid_lookup(
+                        name_split[len(name_split) - 1], name_split[0], fuzzy=True
+                    )
+                    .iloc[0]
+                    .to_dict()
+                )
                 if data["key_bbref"] and type(data["key_bbref"]) != float:
                     player["name"] = data["name_first"] + " " + data["name_last"]
                     player["debut_year"] = data["mlb_played_first"]
@@ -209,7 +225,11 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
                             "last_game": None,
                             "debut": None,
                             "short_name": data["key_bbref"],
-                            "href": "/players/" + data["key_bbref"][0] + "/" + data["key_bbref"] + ".shtml",
+                            "href": "/players/"
+                            + data["key_bbref"][0]
+                            + "/"
+                            + data["key_bbref"]
+                            + ".shtml",
                             "draft_year": None,
                             "WAR": None,
                         }
@@ -223,8 +243,8 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
             card["team_card"] = True
 
     # If any player on card is in their first year when card is released set as rookie
-    for player in card['players']:
-        if player['debut_year'] == card["year"]:
+    for player in card["players"]:
+        if player["debut_year"] == card["year"]:
             card["rookie"] = True
 
     for i, img in enumerate(panel.find_all(class_="img-fluid")):
@@ -264,25 +284,28 @@ def process_group_links(group_links: List[str], year: str):
     res = []
     with tqdm(total=len(futures), desc="Gathering Sets") as pbar:
         for future in cf.as_completed(futures):
-            res.append([future.result(), year, 'group name'])
+            res.append([future.result(), year, "group name"])
             pbar.update(1)
     session.close()
 
     panels = {}
-    i = 0 
+    i = 0
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
         with cf.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res]
+            futures = [
+                executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res
+            ]
             for future in cf.as_completed(futures):
                 panels[i] = future.result()
                 i += 1
                 pbar.update(1)
-                
-    panels = list(itertools.chain(*list(panels.values())))                  
+
+    panels = list(itertools.chain(*list(panels.values())))
 
     return panels
 
-def gather_set_links(r:cf._base.Future) -> List[str]:
+
+def gather_set_links(r: cf._base.Future) -> List[str]:
     """Proccesses a list of http request future and extracts all set links.
 
     Args:
@@ -315,16 +338,19 @@ def process_set_links(set_links: List[str], year: str, group: str = ""):
     res = [[future.result(), year, group] for future in cf.as_completed(futures)]
 
     panels = {}
-    i = 0 
+    i = 0
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
         with cf.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res]
+            futures = [
+                executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res
+            ]
             for future in cf.as_completed(futures):
                 panels[i] = future.result()
                 i += 1
                 pbar.update(1)
-                
-    return list(itertools.chain(*list(panels.values())))  
+
+    return list(itertools.chain(*list(panels.values())))
+
 
 def gather_player_panels(result: Response, year: str, group: str):
     """Proccesses resposnses to create a list of tags containing player panels.
@@ -339,8 +365,10 @@ def gather_player_panels(result: Response, year: str, group: str):
     """
     set = str(result.url).split(year + "-")[1]
     if group == "":
-        group = set   
-    player_soup = just_soup(result, SoupStrainer("div", {"class": "panel panel-primary"}))
+        group = set
+    player_soup = just_soup(
+        result, SoupStrainer("div", {"class": "panel panel-primary"})
+    )
     player_panels = list(player_soup.find_all("div", class_="panel panel-primary"))
     return [[p, year, group, set, False] for p in player_panels]
 
@@ -350,13 +378,15 @@ def multi_thread_panels(player_panels) -> List[Dict]:
 
     Args:
         player_panels: A list of player panels to be parsed.
-    
+
     Returns:
         A list of card dictionaries.
     """
     cards = []
     with cf.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(parse_panel, p[0], p[1], p[2], p[3]) for p in player_panels]
+        futures = [
+            executor.submit(parse_panel, p[0], p[1], p[2], p[3]) for p in player_panels
+        ]
         for future in cf.as_completed(futures):
             cards.append(future.result())
 
@@ -394,6 +424,5 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
 
         print("proccessing multi-sets")
         card_list.extend(multi_thread_panels(process_group_links(group_links, year)))
-
 
     return card_list
