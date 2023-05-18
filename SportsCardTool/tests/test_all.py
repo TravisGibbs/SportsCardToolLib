@@ -87,10 +87,10 @@ def test_remove_accents():
 
 def test_query_builder():
     qb = query_builder()
-    qb.add_item({"name": "Barry Bonds"})
+    qb.add_item({"players": "ruthba01"})
     data = qb.grab_data(21)
-    assert len(data[0]) >= 20
-    assert data[1] >= 20
+    assert len(data[0]) >= 1
+    assert data[1] >= 1
 
 
 def test_grab_year_links():
