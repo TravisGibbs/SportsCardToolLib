@@ -161,7 +161,7 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
     card["set_alt"], name_number = card["listing"].split("#")[:2]
 
     card["set_alt"] = card["set_alt"].strip()
-    card["group_alt"] = year + " " + (" ".join(card["group"].split("-")[:len(card["group"].split("-"))-3])).strip()
+    card["group_alt"] = year + " " + (" ".join(card["group"].split("-")[: len(card["group"].split("-")) - 3])).strip()
 
     card["number"] = name_number.split(" ")[0]
     possible_name = remove_accents(" ".join(name_number.split(" ")[1:])).strip()
