@@ -2,8 +2,9 @@ import csv
 import json
 from typing import Dict, List, Tuple
 import unicodedata
-from urllib.request import urlopen, Request
 import pybaseball as pyb
+import requests
+from requests.models import Response
 
 from bs4 import BeautifulSoup, Tag
 
@@ -391,7 +392,25 @@ def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
     return list(hrefs)
 
 
-def get_soup(href: str) -> BeautifulSoup:
+def just_soup(response: Response, strainer=None) -> BeautifulSoup:
+    """Gets a BeautifulSoup object given a http response.
+
+    The BeautifulSoup object is gathered via an lxml parser. If parsing
+    fails an empty BeatifulSoup object will be returned.
+
+    Args:
+        response: A response containing html content.
+        strainer: A bs4 strainer for reducing content to be returned.
+
+    Returns:
+        A BeautifulSoup object which will contain the contents of the webpage or
+        be empty if the request or parsing fails.
+
+    """
+    return BeautifulSoup(response.content, "lxml", parse_only=strainer)
+
+
+def get_soup(href) -> BeautifulSoup:
     """Gets a BeautifulSoup object given an href string.
 
     The BeautifulSoup object is gathered by making a request to the page and
@@ -407,9 +426,7 @@ def get_soup(href: str) -> BeautifulSoup:
 
     """
     try:
-        req = Request(href)
-        html_page = urlopen(req)
-        return BeautifulSoup(html_page, "lxml")
+        return BeautifulSoup(requests.get(href).content, "lxml")
     except Exception:
         print("failed to capture " + href)
         return BeautifulSoup("<HTML></HTML>", "lxml")

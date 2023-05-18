@@ -18,10 +18,12 @@ from SportsCardTool import (
     statcast_clean_column_names,
     statcast_pitcher_page_stats,
     find_player_ids,
+    just_soup,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
 import json
+import requests
 
 
 def test_grab_bref_info():
