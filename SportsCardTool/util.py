@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple
 import unicodedata
 import pybaseball as pyb
 import requests
+from requests.models import Response
 
 from bs4 import BeautifulSoup, Tag
 
@@ -391,7 +392,22 @@ def filter_hrefs(links: List[Tag], filter: str) -> List[str]:
     return list(hrefs)
 
 
-def just_soup(response, strainer=None):
+def just_soup(response: Response, strainer=None) -> BeautifulSoup:
+    """Gets a BeautifulSoup object given a http response.
+
+    The BeautifulSoup object is gathered via an lxml parser. If parsing
+    fails an empty BeatifulSoup object will be returned.
+
+    Args:
+        response: A response containing html content.
+        strainer: A bs4 strainer for reducing content to be returned.
+
+    Returns:
+        A BeautifulSoup object which will contain the contents of the webpage or
+        be empty if the request or parsing fails.
+
+    """
+    print(type(response))
     try:
         return BeautifulSoup(response.content, "lxml", parse_only=strainer)
     except Exception:

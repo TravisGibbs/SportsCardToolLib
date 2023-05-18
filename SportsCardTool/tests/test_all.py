@@ -18,6 +18,7 @@ from SportsCardTool import (
     statcast_clean_column_names,
     statcast_pitcher_page_stats,
     find_player_ids,
+    just_soup,
 )
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -154,6 +155,11 @@ def test_filter_href():
     mock_data = mock_soup.find_all("a")
     result = filter_hrefs(mock_data, "year-")
     assert len(result) > 0 and len(result) < len(mock_data)
+
+
+def test_just_soup():
+    empty_bs4 = just_soup("fake res")
+    assert len(list(empty_bs4.find_all("h1"))) == 0
 
 
 def test_integration_grab_and_dump():

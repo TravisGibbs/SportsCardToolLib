@@ -19,6 +19,7 @@ from .util import (
     dump_data_csv,
     dump_data_json,
     get_soup,
+    just_soup,
     find_player_ids,
     check_remove_terms,
     statcast_clean_column_names,
