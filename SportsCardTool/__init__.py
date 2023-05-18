@@ -1,5 +1,5 @@
 from ._version import __version__
-from .scraping_tool import (
+from .sports_card_tool import (
     parse_panel,
     grab_card_list,
     grab_year_links,
