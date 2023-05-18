@@ -23,9 +23,9 @@ from SportsCardTool.util import (
     just_soup
 )
 from requests_futures.sessions import FuturesSession
-from concurrent.futures import as_completed
+from requests.models import Response
 import itertools
-import concurrent.futures
+import concurrent.futures as cf
 
 MAX_NET_WORKERS = 20
 
@@ -250,11 +250,11 @@ def process_group_links(group_links: List[str], year: str):
     """
     session = FuturesSession(max_workers=MAX_NET_WORKERS)
     futures = [session.get(link) for link in group_links]
-    res = [[future] for future in as_completed(futures)]
+    res = [[future] for future in cf.as_completed(futures)]
     session.close()
 
     set_links = []
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with cf.ThreadPoolExecutor() as executor:
         futures = [executor.submit(gather_set_links, r[0]) for r in res]
         for f in futures:
             set_links.extend(f.result())
@@ -263,7 +263,7 @@ def process_group_links(group_links: List[str], year: str):
     futures = [session.get(set_link) for set_link in set_links]
     res = []
     with tqdm(total=len(futures), desc="Gathering Sets") as pbar:
-        for future in as_completed(futures):
+        for future in cf.as_completed(futures):
             res.append([future.result(), year, 'group name'])
             pbar.update(1)
     session.close()
@@ -271,9 +271,9 @@ def process_group_links(group_links: List[str], year: str):
     panels = {}
     i = 0 
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with cf.ThreadPoolExecutor() as executor:
             futures = [executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res]
-            for future in as_completed(futures):
+            for future in cf.as_completed(futures):
                 panels[i] = future.result()
                 i += 1
                 pbar.update(1)
@@ -282,11 +282,18 @@ def process_group_links(group_links: List[str], year: str):
 
     return panels
 
-def gather_set_links(r):
-    result = r.result()
-    set_soup = just_soup(result)
-    set_links = filter_hrefs(set(set_soup.findAll("a")), "set-")
-    return [s for s in set_links]
+def gather_set_links(r:cf._base.Future) -> List[str]:
+    """Proccesses a list of http request future and extracts all set links.
+
+    Args:
+        r: A future containing links to sets
+
+    Returns:
+        A list of urls of the sets detected in the page by bs4.
+
+        Note will wait without a timeout if used out of context (not rec)
+    """
+    return [s for s in filter_hrefs(set(just_soup(r.result()).findAll("a")), "set-")]
 
 
 def process_set_links(set_links: List[str], year: str, group: str = ""):
@@ -305,22 +312,31 @@ def process_set_links(set_links: List[str], year: str, group: str = ""):
     """
     session = FuturesSession()
     futures = [session.get(link) for link in set_links]
-    res = [[future.result(), year, group] for future in as_completed(futures)]
+    res = [[future.result(), year, group] for future in cf.as_completed(futures)]
 
     panels = {}
     i = 0 
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with cf.ThreadPoolExecutor() as executor:
             futures = [executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res]
-            for future in as_completed(futures):
+            for future in cf.as_completed(futures):
                 panels[i] = future.result()
                 i += 1
                 pbar.update(1)
                 
     return list(itertools.chain(*list(panels.values())))  
 
-def gather_player_panels(r, year, group):
-    result = r   
+def gather_player_panels(result: Response, year: str, group: str):
+    """Proccesses resposnses to create a list of tags containing player panels.
+
+    Args:
+        r: A response from a query requesting the set.
+        year: A string representing the year the cards belongs to.
+        group: A string respresenting the group the card belongs to.
+
+    Returns:
+        A list of lists where the items are arguments to be passed to parse_panel function
+    """
     set = str(result.url).split(year + "-")[1]
     if group == "":
         group = set   
@@ -329,11 +345,19 @@ def gather_player_panels(r, year, group):
     return [[p, year, group, set, False] for p in player_panels]
 
 
-def multi_thread_panels(player_panels):
+def multi_thread_panels(player_panels) -> List[Dict]:
+    """Proccesses lists representing player panels into a list of card dictionaries
+
+    Args:
+        player_panels: A list of player panels to be parsed.
+    
+    Returns:
+        A list of card dictionaries.
+    """
     cards = []
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with cf.ThreadPoolExecutor() as executor:
         futures = [executor.submit(parse_panel, p[0], p[1], p[2], p[3]) for p in player_panels]
-        for future in as_completed(futures):
+        for future in cf.as_completed(futures):
             cards.append(future.result())
 
     return cards
