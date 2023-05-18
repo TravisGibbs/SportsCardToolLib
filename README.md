@@ -46,7 +46,7 @@ from SportsCardTool import QueryBuilder
 qb = QueryBuilder()
 
 # Construct query requesting Barry Bonds cards from 2000 with an autograph and a print run of 25 or 250
-qb.add_item({"name": "Barry Bonds", "year": "2000", "auto": "True", "serial": "25,250"})
+qb.add_item({"Players": "ruthba01", "year": "2020"})
 
 # Make request and return in form of tuple (list[dict], int)
 data = qb.grab_data()
@@ -55,91 +55,120 @@ print(data[0])
 ```
 ```json
 [
-    {
-      "_id": "641f49185ee984b20a66ef77",
-      "auto": true,
-      "back_img": null,
-      "front_img": null,
-      "group": "fleer-ultra",
-      "listing": "2000 Fleer Ultra Fresh Ink #11 Barry Bonds",
-      "mem": false,
-      "name": "Barry Bonds",
-      "number": "11",
-      "price": 0,
-      "rc": false,
-      "serial": 250,
-      "set": "fleer-ultra-fresh-ink-baseball-trading-card-checklist",
-      "team": "San Francisco Giants",
-      "year": 2000
-    },
-    {
-      "_id": "641f49185ee984b20a66f5f4",
-      "auto": true,
-      "back_img": null,
-      "front_img": null,
-      "group": "fleer-ultra",
-      "listing": "2000 Fleer Ultra Fresh Ink #11 Barry Bonds",
-      "mem": false,
-      "name": "Barry Bonds",
-      "number": "11",
-      "price": 0,
-      "rc": false,
-      "serial": 250,
-      "set": "fleer-ultra-fresh-ink-baseball-trading-card-checklist",
-      "team": "San Francisco Giants",
-      "year": 2000
-    },
-    {
-      "_id": "641f49185ee984b20a674b2f",
-      "auto": true,
-      "back_img": null,
-      "front_img": null,
-      "group": "upper-deck",
-      "listing": "2000 Upper Deck  Game Jersey Autograph Numbered #BB Barry Bonds",
-      "mem": true,
-      "name": "Barry Bonds",
-      "number": "BB",
-      "price": 0,
-      "rc": false,
-      "serial": 25,
-      "set": "upper-deck-game-jersey-autograph-numbered-baseball-trading-card-checklist",
-      "team": "San Francisco Giants",
-      "year": 2000
-    },
-    {
-      "_id": "641f49185ee984b20a678e31",
-      "auto": true,
-      "back_img": null,
-      "front_img": null,
-      "group": "upper-deck-pros-and-prospects",
-      "listing": "2000 Upper Deck Pros and Prospects Game Jersey Autograph Gold #BB Barry Bonds",
-      "mem": true,
-      "name": "Barry Bonds",
-      "number": "BB",
-      "price": 0,
-      "rc": false,
-      "serial": 25,
-      "set": "upper-deck-pros-and-prospects-game-jersey-autograph-gold-baseball-trading-card-checklist",
-      "team": "San Francisco Giants",
-      "year": 2000
-    },
-    {
-      "_id": "641f49185ee984b20a67958c",
-      "auto": true,
-      "back_img": null,
-      "front_img": null,
-      "group": "sp-authentic",
-      "listing": "2000 SP Authentic Chirography Gold #GBB Barry Bonds",
-      "mem": false,
-      "name": "Barry Bonds",
-      "number": "GBB",
-      "price": 0,
-      "rc": false,
-      "serial": 25,
-      "set": "sp-authentic-chirography-gold-baseball-trading-card-checklist",
-      "team": "San Francisco Giants",
-      "year": 2000
-    }
+   {
+      "_id":"64551d0ee3e2072a92cb809a",
+      "all_star":false,
+      "auto":false,
+      "back_img":"None",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"None",
+      "group":"topps-nowtheshow-baseball-card-checklist",
+      "leaders":false,
+      "listing":"2020 Topps Throwback Thursday  #206 Babe Ruth",
+      "manager":false,
+      "mem":false,
+      "number":"206",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":1935,
+            "name":"Babe Ruth",
+            "short_name":"ruthba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "serial":0,
+      "server_pop":0,
+      "set":"topps-throwbackthursday-baseball-card-checklist",
+      "set_alt":"2020 Topps Throwback Thursday  ",
+      "team":"New York Yankees",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2020"
+   },
+   {
+      "_id":"64551d0ee3e2072a92cb7fda",
+      "all_star":false,
+      "auto":false,
+      "back_img":"https://www.gletech.com/StockPhotos/Baseball/2020/184940/back_thumb_8892339.jpg",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"https://www.gletech.com/StockPhotos/Baseball/2020/184940/front_thumb_8892339.jpg",
+      "group":"topps-nowtheshow-baseball-card-checklist",
+      "leaders":false,
+      "listing":"2020 Topps Throwback Thursday  #8 Babe Ruth",
+      "manager":false,
+      "mem":false,
+      "number":"8",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":1935,
+            "name":"Babe Ruth",
+            "short_name":"ruthba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "serial":0,
+      "server_pop":0,
+      "set":"topps-throwbackthursday-baseball-card-checklist",
+      "set_alt":"2020 Topps Throwback Thursday  ",
+      "team":"New York Yankees",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2020"
+   },
+   {
+      "_id":"64551d0ee3e2072a92cb8068",
+      "all_star":false,
+      "auto":false,
+      "back_img":"None",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"None",
+      "group":"topps-nowtheshow-baseball-card-checklist",
+      "leaders":false,
+      "listing":"2020 Topps Throwback Thursday  #150 Babe Ruth",
+      "manager":false,
+      "mem":false,
+      "number":"150",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":1935,
+            "name":"Babe Ruth",
+            "short_name":"ruthba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "serial":0,
+      "server_pop":0,
+      "set":"topps-throwbackthursday-baseball-card-checklist",
+      "set_alt":"2020 Topps Throwback Thursday  ",
+      "team":"New York Yankees",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2020"
+   }
 ]
 ```
 
