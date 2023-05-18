@@ -18,7 +18,8 @@ dependencies = [
     "bs4",
     "tqdm",
     "lxml",
-    "pybaseball"
+    "pybaseball",
+    "cchardet"
 ]
 
 classifiers = [
