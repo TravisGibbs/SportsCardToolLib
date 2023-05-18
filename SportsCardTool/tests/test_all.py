@@ -23,6 +23,7 @@ from SportsCardTool import (
 from bs4 import BeautifulSoup
 import pandas as pd
 import json
+import requests
 
 
 def test_grab_bref_info():
@@ -158,7 +159,7 @@ def test_filter_href():
 
 
 def test_just_soup():
-    empty_bs4 = just_soup("fake res")
+    empty_bs4 = just_soup(requests.get("http://localhost:404/"))
     assert len(list(empty_bs4.find_all("h1"))) == 0
 
 
