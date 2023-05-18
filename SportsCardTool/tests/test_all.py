@@ -158,11 +158,6 @@ def test_filter_href():
     assert len(result) > 0 and len(result) < len(mock_data)
 
 
-def test_just_soup():
-    empty_bs4 = just_soup(requests.get("http://localhost:404/"))
-    assert len(list(empty_bs4.find_all("h1"))) == 0
-
-
 def test_integration_grab_and_dump():
     card_list = grab_card_list(grab_year_links(["1950"]))
     expected_length = len(card_list)

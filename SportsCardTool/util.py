@@ -407,12 +407,7 @@ def just_soup(response: Response, strainer=None) -> BeautifulSoup:
         be empty if the request or parsing fails.
 
     """
-    print(type(response))
-    try:
-        return BeautifulSoup(response.content, "lxml", parse_only=strainer)
-    except Exception:
-        print("failed to capture " + response.url)
-        return BeautifulSoup("<HTML></HTML>", "lxml")
+    return BeautifulSoup(response.content, "lxml", parse_only=strainer)
 
 
 def get_soup(href) -> BeautifulSoup:
