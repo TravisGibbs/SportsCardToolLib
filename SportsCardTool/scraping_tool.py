@@ -100,9 +100,7 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     return year_links
 
 
-def parse_panel(
-    panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False
-) -> Dict:
+def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False) -> Dict:
     """Takes in a panel and other gathered info and creates a card dict to be returned.
 
     Args:
@@ -172,14 +170,10 @@ def parse_panel(
     possible_name, card["manager"], _ = check_remove_terms(possible_name, MANAGER_TERMS)
     possible_name, card["error"], _ = check_remove_terms(possible_name, ERROR_TERMS)
     possible_name, card["leaders"], _ = check_remove_terms(possible_name, LEADERS_TERMS)
-    possible_name, card["all_star"], _ = check_remove_terms(
-        possible_name, ALL_STAR_TERMS
-    )
+    possible_name, card["all_star"], _ = check_remove_terms(possible_name, ALL_STAR_TERMS)
     possible_name, card["rc"], _ = check_remove_terms(possible_name, ROOKIE_TERMS)
     possible_name, _, _ = check_remove_terms(possible_name, POSITION_TERMS)
-    possible_name, _, card["parallel"] = check_remove_terms(
-        possible_name, PARALLEL_TERMS
-    )
+    possible_name, _, card["parallel"] = check_remove_terms(possible_name, PARALLEL_TERMS)
 
     possible_names = possible_name.split("/")
     for pos_name in possible_names:
@@ -203,18 +197,8 @@ def parse_panel(
             name_split = pos_name.split(" ")
 
             # If no name is detected in the json file add new entry
-            if (
-                not card_bref["short_name"]
-                and len(name_split) >= 2
-                and pybaseball_replace
-            ):
-                data = (
-                    pyb.playerid_lookup(
-                        name_split[len(name_split) - 1], name_split[0], fuzzy=True
-                    )
-                    .iloc[0]
-                    .to_dict()
-                )
+            if not card_bref["short_name"] and len(name_split) >= 2 and pybaseball_replace:
+                data = pyb.playerid_lookup(name_split[len(name_split) - 1], name_split[0], fuzzy=True).iloc[0].to_dict()
                 if data["key_bbref"] and type(data["key_bbref"]) != float:
                     player["name"] = data["name_first"] + " " + data["name_last"]
                     player["debut_year"] = data["mlb_played_first"]
@@ -225,11 +209,7 @@ def parse_panel(
                             "last_game": None,
                             "debut": None,
                             "short_name": data["key_bbref"],
-                            "href": "/players/"
-                            + data["key_bbref"][0]
-                            + "/"
-                            + data["key_bbref"]
-                            + ".shtml",
+                            "href": "/players/" + data["key_bbref"][0] + "/" + data["key_bbref"] + ".shtml",
                             "draft_year": None,
                             "WAR": None,
                         }
@@ -292,9 +272,7 @@ def process_group_links(group_links: List[str], year: str):
     i = 0
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
         with cf.ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res
-            ]
+            futures = [executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res]
             for future in cf.as_completed(futures):
                 panels[i] = future.result()
                 i += 1
@@ -341,9 +319,7 @@ def process_set_links(set_links: List[str], year: str, group: str = ""):
     i = 0
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
         with cf.ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res
-            ]
+            futures = [executor.submit(gather_player_panels, r[0], r[1], r[2]) for r in res]
             for future in cf.as_completed(futures):
                 panels[i] = future.result()
                 i += 1
@@ -366,9 +342,7 @@ def gather_player_panels(result: Response, year: str, group: str):
     set = str(result.url).split(year + "-")[1]
     if group == "":
         group = set
-    player_soup = just_soup(
-        result, SoupStrainer("div", {"class": "panel panel-primary"})
-    )
+    player_soup = just_soup(result, SoupStrainer("div", {"class": "panel panel-primary"}))
     player_panels = list(player_soup.find_all("div", class_="panel panel-primary"))
     return [[p, year, group, set, False] for p in player_panels]
 
@@ -384,9 +358,7 @@ def multi_thread_panels(player_panels) -> List[Dict]:
     """
     cards = []
     with cf.ThreadPoolExecutor() as executor:
-        futures = [
-            executor.submit(parse_panel, p[0], p[1], p[2], p[3]) for p in player_panels
-        ]
+        futures = [executor.submit(parse_panel, p[0], p[1], p[2], p[3]) for p in player_panels]
         for future in cf.as_completed(futures):
             cards.append(future.result())
 
