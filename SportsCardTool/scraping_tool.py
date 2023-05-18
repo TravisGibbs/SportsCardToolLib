@@ -118,8 +118,9 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
         Note the listing parser to find player names still struggles identifying
         several types of cards (team cards, multi player, checklist).
     """
-    card = {"year": year, "group": group, "set": set}
+    card = {"year": year, "group": group.strip(), "set": set}
     card["set_alt"] = None
+    card["group_alt"] = None
     card["serial"] = 0
     card["auto"] = False
     card["mem"] = False
@@ -158,6 +159,9 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
     card["team"] = str(badge_panel[0]).split(">")[1].split("<")[0].strip()
     card["listing"] = panel.find("h5").text.strip()
     card["set_alt"], name_number = card["listing"].split("#")[:2]
+
+    card["set_alt"] = card["set_alt"].strip()
+    card["group_alt"] = year + " " + (" ".join(card["group"].split("-")[:len(card["group"].split("-"))-3])).strip()
 
     card["number"] = name_number.split(" ")[0]
     possible_name = remove_accents(" ".join(name_number.split(" ")[1:])).strip()
