@@ -161,7 +161,9 @@ def parse_panel(panel: Tag, year: str, release: str, set: str, pybaseball_replac
     card["set_alt"], name_number = card["listing"].split("#")[:2]
 
     card["set_alt"] = card["set_alt"].strip()
-    card["release_alt"] = year + " " + (" ".join(card["release"].split("-")[: len(card["release"].split("-")) - 3])).strip()
+    card["release_alt"] = (
+        year + " " + (" ".join(card["release"].split("-")[: len(card["release"].split("-")) - 3])).strip()
+    )
 
     card["number"] = name_number.split(" ")[0]
     possible_name = remove_accents(" ".join(name_number.split(" ")[1:])).strip()
@@ -270,7 +272,7 @@ def process_release_links(release_links: List[str], year: str):
 
     # Gather Page Content from Set Pages
     session = FuturesSession(max_workers=MAX_NET_WORKERS)
-    futures = [session.get(set_link[0]+"?release_name="+set_link[1]) for set_link in set_links]
+    futures = [session.get(set_link[0] + "?release_name=" + set_link[1]) for set_link in set_links]
     res = []
     with tqdm(total=len(futures), desc="Gathering Sets") as pbar:
         for future in cf.as_completed(futures):
@@ -295,7 +297,7 @@ def process_release_links(release_links: List[str], year: str):
     return panels
 
 
-def gather_set_links(result: cf._base.Future, group_name = "") -> List[str]:
+def gather_set_links(result: cf._base.Future, release_name="") -> List[str]:
     """Proccesses a list of http request future and extracts all set links.
 
     Args:
@@ -306,7 +308,7 @@ def gather_set_links(result: cf._base.Future, group_name = "") -> List[str]:
 
         Note will wait without a timeout if used out of context (not rec)
     """
-    return [[s, group_name] for s in filter_hrefs(set(just_soup(result).findAll("a")), "set-")]
+    return [[s, release_name] for s in filter_hrefs(set(just_soup(result).findAll("a")), "set-")]
 
 
 def process_set_links(set_links: List[str], year: str, release: str = ""):

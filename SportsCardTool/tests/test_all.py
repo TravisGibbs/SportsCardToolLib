@@ -6,7 +6,7 @@ from SportsCardTool import (
     filter_hrefs,
     grab_year_links,
     query_builder,
-    process_group_links,
+    process_release_links,
     process_set_links,
     grab_debut_dict,
     remove_accents,
@@ -108,8 +108,8 @@ def test_process_set_links():
     assert len(cards) > 40
 
 
-def test_process_group_links():
-    cards = process_group_links(
+def test_process_release_links():
+    cards = process_release_links(
         [
             "https://www.sportscardchecklist.com/sport-baseball/year-1990/index-star/trading-card-checklists-and-product-information"
         ],
