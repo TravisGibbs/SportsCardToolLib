@@ -3,7 +3,7 @@ from .sports_card_tool import (
     parse_panel,
     grab_card_list,
     grab_year_links,
-    process_group_links,
+    process_release_links,
     process_set_links,
     grab_bref_info,
 )
