@@ -102,13 +102,13 @@ def grab_year_links(year_list: List[str], sport: str = "baseball") -> List[Tuple
     return year_links
 
 
-def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace: bool = False) -> Dict:
+def parse_panel(panel: Tag, year: str, release: str, set: str, pybaseball_replace: bool = False) -> Dict:
     """Takes in a panel and other gathered info and creates a card dict to be returned.
 
     Args:
         panel: A html tag containing all of the players info.
         year: A string representing the year the card belongs to.
-        Group: A string representing the group the card belongs to
+        release: A string representing the release the card belongs to
         Set: A string representing the set the card belongs to.
         pyball_replace: A bool that if enabled, double checks names with pybaseball
 
@@ -120,9 +120,9 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
         Note the listing parser to find player names still struggles identifying
         several types of cards (team cards, multi player, checklist).
     """
-    card = {"year": year, "group": group.strip(), "set": set}
+    card = {"year": year, "release": release.strip(), "set": set}
     card["set_alt"] = None
-    card["group_alt"] = None
+    card["release_alt"] = None
     card["serial"] = 0
     card["auto"] = False
     card["mem"] = False
@@ -163,7 +163,9 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
     card["set_alt"], name_number = card["listing"].split("#")[:2]
 
     card["set_alt"] = card["set_alt"].strip()
-    card["group_alt"] = year + " " + (" ".join(card["group"].split("-")[: len(card["group"].split("-")) - 3])).strip()
+    card["release_alt"] = (
+        year + " " + (" ".join(card["release"].split("-")[: len(card["release"].split("-")) - 3])).strip()
+    )
 
     card["number"] = name_number.split(" ")[0]
     possible_name = remove_accents(" ".join(name_number.split(" ")[1:])).strip()
@@ -242,38 +244,46 @@ def parse_panel(panel: Tag, year: str, group: str, set: str, pybaseball_replace:
     return card
 
 
-def process_group_links(group_links: List[str], year: str):
-    """Proccesses group links into sets and then returns all cards in the group.
+def process_release_links(release_links: List[str], year: str):
+    """Proccesses release links into sets and then returns all cards in the release.
 
     Args:
-        group_links: A list of href strings.
+        release_links: A list of href strings.
         year: A string representing the year the cards belongs to.
 
     Returns:
         A list of card dictionaries as proccessed by parse_panel. The cards
-        returned will have a reference to the year, group, and set respectively.
+        returned will have a reference to the year, release, and set respectively.
 
     """
+    # Gather Page Content from Release pages
+    res = []
     session = FuturesSession(max_workers=MAX_NET_WORKERS)
-    futures = [session.get(link) for link in group_links]
-    res = [[future] for future in cf.as_completed(futures)]
+    futures = [session.get(link) for link in release_links]
+    for future in cf.as_completed(futures):
+        result = future.result()
+        res.append([result, result.url.split("index-")[1].split("/")[0]])
     session.close()
 
+    # Gather Set Links from Page Content
     set_links = []
     with cf.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(gather_set_links, r[0]) for r in res]
-        for f in futures:
+        futures = [executor.submit(gather_set_links, r[0], r[1]) for r in res]
+        for f in cf.as_completed(futures):
             set_links.extend(f.result())
 
+    # Gather Page Content from Set Pages
     session = FuturesSession(max_workers=MAX_NET_WORKERS)
-    futures = [session.get(set_link) for set_link in set_links]
+    futures = [session.get(set_link[0] + "?release_name=" + set_link[1]) for set_link in set_links]
     res = []
     with tqdm(total=len(futures), desc="Gathering Sets") as pbar:
         for future in cf.as_completed(futures):
-            res.append([future.result(), year, "group name"])
+            result = future.result()
+            res.append([result, year, result.url.split("?release_name=")[1]])
             pbar.update(1)
     session.close()
 
+    # Gather Player Panels from Page Content
     panels = {}
     i = 0
     with tqdm(total=len(res), desc="Gathering Cards") as pbar:
@@ -289,21 +299,21 @@ def process_group_links(group_links: List[str], year: str):
     return panels
 
 
-def gather_set_links(r: cf._base.Future) -> List[str]:
+def gather_set_links(result: cf._base.Future, release_name="") -> List[str]:
     """Proccesses a list of http request future and extracts all set links.
 
     Args:
-        r: A future containing links to sets
+        result: A future containing links to sets
 
     Returns:
         A list of urls of the sets detected in the page by bs4.
 
         Note will wait without a timeout if used out of context (not rec)
     """
-    return [s for s in filter_hrefs(set(just_soup(r.result()).findAll("a")), "set-")]
+    return [[s, release_name] for s in filter_hrefs(set(just_soup(result).findAll("a")), "set-")]
 
 
-def process_set_links(set_links: List[str], year: str, group: str = ""):
+def process_set_links(set_links: List[str], year: str, release: str = ""):
     """Proccesses set links and then returns all cards in the sets.
 
     Args:
@@ -312,14 +322,14 @@ def process_set_links(set_links: List[str], year: str, group: str = ""):
 
     Returns:
         A list of card dictionaries as proccessed by parse_panel. The cards
-        returned will have a reference to the year, group, and set respectively.
+        returned will have a reference to the year, release, and set respectively.
 
-        Note if not group is detected group is set to be equal to set to enable easy
+        Note if not release is detected release is set to be equal to set to enable easy
         future searching.
     """
     session = FuturesSession()
     futures = [session.get(link) for link in set_links]
-    res = [[future.result(), year, group] for future in cf.as_completed(futures)]
+    res = [[future.result(), year, release] for future in cf.as_completed(futures)]
 
     panels = {}
     i = 0
@@ -334,23 +344,23 @@ def process_set_links(set_links: List[str], year: str, group: str = ""):
     return list(itertools.chain(*list(panels.values())))
 
 
-def gather_player_panels(result: Response, year: str, group: str):
+def gather_player_panels(result: Response, year: str, release: str):
     """Proccesses resposnses to create a list of tags containing player panels.
 
     Args:
         r: A response from a query requesting the set.
         year: A string representing the year the cards belongs to.
-        group: A string respresenting the group the card belongs to.
+        release: A string respresenting the release the card belongs to.
 
     Returns:
         A list of lists where the items are arguments to be passed to parse_panel function
     """
     set = str(result.url).split(year + "-")[1]
-    if group == "":
-        group = set
+    if release == "":
+        release = set
     player_soup = just_soup(result, SoupStrainer("div", {"class": "panel panel-primary"}))
     player_panels = list(player_soup.find_all("div", class_="panel panel-primary"))
-    return [[p, year, group, set, False] for p in player_panels]
+    return [[p, year, release, set, False] for p in player_panels]
 
 
 def multi_thread_panels(player_panels) -> List[Dict]:
@@ -372,13 +382,13 @@ def multi_thread_panels(player_panels) -> List[Dict]:
 
 
 def grab_card_list(year_links: List[str]) -> List[Dict]:
-    """Finds all groups and sets in a year and returns all cards.
+    """Finds all releases and sets in a year and returns all cards.
 
     Args:
         year_links: A list of href strings to different years to be parsed
 
     Returns:
-        A list of all cards from different groups/sets in the year as parsed by
+        A list of all cards from different releases/sets in the year as parsed by
         parse_panel.
 
         Note performance is still slow due to network calls and the amount of
@@ -391,16 +401,16 @@ def grab_card_list(year_links: List[str]) -> List[Dict]:
     for year_link in year_links:
         year = str(year_link).split("year-")[1].split("/")[0]
         print("Finding cards for", year, "hold on this might take a while!")
-        group_soup = get_soup(year_link)
-        groupus_soupus = set(group_soup.findAll("a"))
+        release_soup = get_soup(year_link)
+        releaseus_soupus = set(release_soup.findAll("a"))
 
-        set_links = filter_hrefs(groupus_soupus, "set-")
-        group_links = filter_hrefs(groupus_soupus, "index-")
+        set_links = filter_hrefs(releaseus_soupus, "set-")
+        release_links = filter_hrefs(releaseus_soupus, "index-")
 
-        print("proccessing independent sets")
+        print("proccessing single set releases")
         card_list.extend(multi_thread_panels(process_set_links(set_links, year)))
 
-        print("proccessing multi-sets")
-        card_list.extend(multi_thread_panels(process_group_links(group_links, year)))
+        print("proccessing multi-set releases")
+        card_list.extend(multi_thread_panels(process_release_links(release_links, year)))
 
     return card_list
