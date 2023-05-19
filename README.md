@@ -41,12 +41,12 @@ Also accessible directly [here](https://travisapi.pythonanywhere.com/api/v1/spor
 
 ```py
 
-from SportsCardTool import QueryBuilder
+from SportsCardTool import query_builder
 
-qb = QueryBuilder()
+qb = query_builder()
 
 # Construct query requesting Barry Bonds cards from 2000 with an autograph and a print run of 25 or 250
-qb.add_item({"Players": "ruthba01", "year": "2020"})
+qb.add_item({"players": "bondsba01", "year": "2000", "auto": "True", "serial": "25,250"})
 
 # Make request and return in form of tuple (list[dict], int)
 data = qb.grab_data()
@@ -56,118 +56,238 @@ print(data[0])
 ```json
 [
    {
-      "_id":"64551d0ee3e2072a92cb809a",
+      "_id":"6467d1d3d19b3e7d748c339a",
       "all_star":false,
-      "auto":false,
+      "auto":true,
       "back_img":"None",
       "checklist":false,
       "debut_year":"None",
       "error":false,
       "front_img":"None",
-      "group":"topps-nowtheshow-baseball-card-checklist",
       "leaders":false,
-      "listing":"2020 Topps Throwback Thursday  #206 Babe Ruth",
+      "listing":"2000 Upper Deck MVP Game Used Souvenirs Signed #BBSB Barry Bonds Bat",
       "manager":false,
-      "mem":false,
-      "number":"206",
+      "mem":true,
+      "number":"BBSB",
       "parallel":false,
       "players":[
          {
             "debut_year":false,
-            "last_year":1935,
-            "name":"Babe Ruth",
-            "short_name":"ruthba01"
+            "last_year":2007,
+            "name":"Barry Bonds Bat",
+            "short_name":"bondsba01"
          }
       ],
       "price":0,
       "rc":false,
-      "serial":0,
+      "release":"upper-deck-mvp",
+      "release_alt":"2000 ",
+      "serial":25,
       "server_pop":0,
-      "set":"topps-throwbackthursday-baseball-card-checklist",
-      "set_alt":"2020 Topps Throwback Thursday  ",
-      "team":"New York Yankees",
+      "set":"upper-deck-mvp-game-used-souvenirs-signed-baseball-trading-card-checklist?release_name=upper-deck-mvp",
+      "set_alt":"2000 Upper Deck MVP Game Used Souvenirs Signed",
+      "team":"San Francisco Giants",
       "team_card":false,
       "umpire":false,
       "user_upload_links":[
          
       ],
-      "year":"2020"
+      "year":"2000"
    },
    {
-      "_id":"64551d0ee3e2072a92cb7fda",
+      "_id":"6467d1d3d19b3e7d748c3455",
       "all_star":false,
-      "auto":false,
-      "back_img":"https://www.gletech.com/StockPhotos/Baseball/2020/184940/back_thumb_8892339.jpg",
-      "checklist":false,
-      "debut_year":"None",
-      "error":false,
-      "front_img":"https://www.gletech.com/StockPhotos/Baseball/2020/184940/front_thumb_8892339.jpg",
-      "group":"topps-nowtheshow-baseball-card-checklist",
-      "leaders":false,
-      "listing":"2020 Topps Throwback Thursday  #8 Babe Ruth",
-      "manager":false,
-      "mem":false,
-      "number":"8",
-      "parallel":false,
-      "players":[
-         {
-            "debut_year":false,
-            "last_year":1935,
-            "name":"Babe Ruth",
-            "short_name":"ruthba01"
-         }
-      ],
-      "price":0,
-      "rc":false,
-      "serial":0,
-      "server_pop":0,
-      "set":"topps-throwbackthursday-baseball-card-checklist",
-      "set_alt":"2020 Topps Throwback Thursday  ",
-      "team":"New York Yankees",
-      "team_card":false,
-      "umpire":false,
-      "user_upload_links":[
-         
-      ],
-      "year":"2020"
-   },
-   {
-      "_id":"64551d0ee3e2072a92cb8068",
-      "all_star":false,
-      "auto":false,
+      "auto":true,
       "back_img":"None",
       "checklist":false,
       "debut_year":"None",
       "error":false,
       "front_img":"None",
-      "group":"topps-nowtheshow-baseball-card-checklist",
       "leaders":false,
-      "listing":"2020 Topps Throwback Thursday  #150 Babe Ruth",
+      "listing":"2000 Upper Deck MVP Game Used Souvenirs Signed #BBSG Barry Bonds Glove",
       "manager":false,
-      "mem":false,
-      "number":"150",
+      "mem":true,
+      "number":"BBSG",
       "parallel":false,
       "players":[
          {
             "debut_year":false,
-            "last_year":1935,
-            "name":"Babe Ruth",
-            "short_name":"ruthba01"
+            "last_year":2007,
+            "name":"Barry Bonds Glove",
+            "short_name":"bondsba01"
          }
       ],
       "price":0,
       "rc":false,
-      "serial":0,
+      "release":"upper-deck-mvp",
+      "release_alt":"2000 ",
+      "serial":25,
       "server_pop":0,
-      "set":"topps-throwbackthursday-baseball-card-checklist",
-      "set_alt":"2020 Topps Throwback Thursday  ",
-      "team":"New York Yankees",
+      "set":"upper-deck-mvp-game-used-souvenirs-signed-baseball-trading-card-checklist?release_name=upper-deck-mvp",
+      "set_alt":"2000 Upper Deck MVP Game Used Souvenirs Signed",
+      "team":"San Francisco Giants",
       "team_card":false,
       "umpire":false,
       "user_upload_links":[
          
       ],
-      "year":"2020"
+      "year":"2000"
+   },
+   {
+      "_id":"6467d1dcd19b3e7d748c3f24",
+      "all_star":false,
+      "auto":true,
+      "back_img":"None",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"None",
+      "leaders":false,
+      "listing":"2000 Upper Deck  Game Jersey Autograph Numbered #BB Barry Bonds",
+      "manager":false,
+      "mem":true,
+      "number":"BB",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":2007,
+            "name":"Barry Bonds",
+            "short_name":"bondsba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "release":"upper-deck",
+      "release_alt":"2000 upper",
+      "serial":25,
+      "server_pop":0,
+      "set":"upper-deck-game-jersey-autograph-numbered-baseball-trading-card-checklist?release_name=upper-deck",
+      "set_alt":"2000 Upper Deck  Game Jersey Autograph Numbered",
+      "team":"San Francisco Giants",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2000"
+   },
+   {
+      "_id":"6467d1dcd19b3e7d748c3fd6",
+      "all_star":false,
+      "auto":true,
+      "back_img":"None",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"None",
+      "leaders":false,
+      "listing":"2000 Fleer Ultra Fresh Ink #11 Barry Bonds",
+      "manager":false,
+      "mem":false,
+      "number":"11",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":2007,
+            "name":"Barry Bonds",
+            "short_name":"bondsba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "release":"fleer-ultra",
+      "release_alt":"2000 fleer",
+      "serial":250,
+      "server_pop":0,
+      "set":"fleer-ultra-fresh-ink-baseball-trading-card-checklist?release_name=fleer-ultra",
+      "set_alt":"2000 Fleer Ultra Fresh Ink",
+      "team":"San Francisco Giants",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2000"
+   },
+   {
+      "_id":"6467d1f9d19b3e7d748cb602",
+      "all_star":false,
+      "auto":true,
+      "back_img":"None",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"None",
+      "leaders":false,
+      "listing":"2000 SP Authentic Chirography Gold #GBB Barry Bonds",
+      "manager":false,
+      "mem":false,
+      "number":"GBB",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":2007,
+            "name":"Barry Bonds",
+            "short_name":"bondsba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "release":"sp-authentic",
+      "release_alt":"2000 sp",
+      "serial":25,
+      "server_pop":0,
+      "set":"sp-authentic-chirography-gold-baseball-trading-card-checklist?release_name=sp-authentic",
+      "set_alt":"2000 SP Authentic Chirography Gold",
+      "team":"San Francisco Giants",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2000"
+   },
+   {
+      "_id":"6467d203d19b3e7d748ce35c",
+      "all_star":false,
+      "auto":true,
+      "back_img":"None",
+      "checklist":false,
+      "debut_year":"None",
+      "error":false,
+      "front_img":"None",
+      "leaders":false,
+      "listing":"2000 Upper Deck Pros and Prospects Game Jersey Autograph Gold #BB Barry Bonds",
+      "manager":false,
+      "mem":true,
+      "number":"BB",
+      "parallel":false,
+      "players":[
+         {
+            "debut_year":false,
+            "last_year":2007,
+            "name":"Barry Bonds",
+            "short_name":"bondsba01"
+         }
+      ],
+      "price":0,
+      "rc":false,
+      "release":"upper-deck-pros-and-prospects",
+      "release_alt":"2000 upper deck",
+      "serial":25,
+      "server_pop":0,
+      "set":"upper-deck-pros-and-prospects-game-jersey-autograph-gold-baseball-trading-card-checklist?release_name=upper-deck-pros-and-prospects",
+      "set_alt":"2000 Upper Deck Pros and Prospects Game Jersey Autograph Gold",
+      "team":"San Francisco Giants",
+      "team_card":false,
+      "umpire":false,
+      "user_upload_links":[
+         
+      ],
+      "year":"2000"
    }
 ]
 ```
