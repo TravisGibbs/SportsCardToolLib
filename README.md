@@ -11,7 +11,7 @@ SportsCardTool is designed to gather card data and track collections of cards. W
 
 Currently SportsCardTool provides the ability to gather all baseball card setlists and to search prescraped data via data API and Querybuilder tool.
 
-Potential contributors should check out [SportsCardToolServer](https://github.com/TravisGibbs/SportsCardToolServer) and soon to launch [SportsCardToolApp](https://github.com/TravisGibbs/SportsCardToolApp).
+Potential contributors should check out [SportsCardToolApp](https://github.com/TravisGibbs/SportsCardToolApp) or ask about SportsCardToolAPI for potential new endpoints or contributions.
 
 ## Install it from PyPI
 
