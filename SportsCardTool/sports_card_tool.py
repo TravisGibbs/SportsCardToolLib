@@ -73,11 +73,13 @@ def grab_bref_info(name: str) -> Dict:
     return card_bref, return_name
 
 
-def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
+def grab_year_links(year_list: List[str], sport: str = "baseball") -> List[Tuple[Tag]]:
     """Takes a list of years and finds link Tags for each year on SportsCardsChecklist.com.
 
     Args:
         year_list: List of strings with each representing a numeric year IE: ['2015', '2016']
+        sport: string corresponding to one of the categories availible on SportsCardsChecklist.com
+        defaults to baseball
 
     Returns:
         A list of tuples with the first value being an <a> tag that contained any one of
@@ -92,7 +94,7 @@ def grab_year_links(year_list: List[str]) -> List[Tuple[Tag]]:
     year_links = []
 
     year_soup = get_soup(
-        "https://www.sportscardchecklist.com/sport-baseball/vintage-and-new-release-trading-card-checklists"
+        f"https://www.sportscardchecklist.com/sport-{sport}/vintage-and-new-release-trading-card-checklists"
     )
 
     for year in year_list:
